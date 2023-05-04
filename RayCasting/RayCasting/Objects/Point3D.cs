@@ -1,5 +1,5 @@
 ﻿namespace RayCasting.Objects;
-internal readonly struct Point3D : I3DSpaceObject
+internal readonly struct Point3D
 {
     public Point3D(float x, float y, float z)
     {
@@ -7,8 +7,11 @@ internal readonly struct Point3D : I3DSpaceObject
         Y = y;
         Z = z;
     }
+
     public readonly float X { get; }
+
     public readonly float Y { get; }
+
     public readonly float Z { get; }
 
     public float GetDistance(Point3D that)

@@ -6,6 +6,8 @@ internal readonly struct Ray3D
         Origin = origin;
         Direction = direction.Normalized();
     }
+
     public readonly Point3D Origin { get; }
+
     public readonly Vector3D Direction { get; }
 }

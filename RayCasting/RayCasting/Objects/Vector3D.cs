@@ -1,5 +1,5 @@
 ﻿namespace RayCasting.Objects;
-internal readonly struct Vector3D : I3DSpaceObject
+internal readonly struct Vector3D
 {
     public Vector3D(float x, float y, float z)
     {
@@ -22,10 +22,31 @@ internal readonly struct Vector3D : I3DSpaceObject
         Z = copyFrom.Z;
     }
 
+    public Vector3D((float alpha, float beta, float gamma) angles)
+    {
+        X = (float)Math.Cos(angles.alpha);
+        Y = (float)Math.Cos(angles.beta);
+        Z = (float)Math.Cos(angles.gamma);
+    }
+
     public readonly float X { get; } 
+
     public readonly float Y { get; }
+
     public readonly float Z { get; }
+
     public float Abs => (float)Math.Sqrt((X * X) +(Y * Y) + (Z * Z));
+
+    public (float, float, float) GetAngles()
+    {
+        Vector3D normalized = this.Normalized();
+
+        float alpha = (float)Math.Acos(normalized.X);
+        float beta = (float)Math.Acos(normalized.Y);
+        float gamma = (float)Math.Acos(normalized.Z);
+
+        return (alpha, beta, gamma);
+    }
 
     public float Dot(Vector3D that)
     {
@@ -79,6 +100,16 @@ internal readonly struct Vector3D : I3DSpaceObject
     public static Vector3D operator -(Vector3D left, Vector3D right)
     {
         Vector3D resultVector = left + (-right);
+        return resultVector;
+    }
+
+    public static Vector3D operator *(Vector3D vector, float scalar)
+    {
+        Vector3D resultVector = new(
+            vector.X * scalar,
+            vector.Y * scalar,
+            vector.Z * scalar);
+
         return resultVector;
     }
 }
