@@ -21,7 +21,7 @@ internal class Sphere : IIntersectable
 
         Vector3D centerToOrigin = new(Center, ray.Origin);
         float a = ray.Direction.Dot(ray.Direction);
-        float b = 2 * ray.Direction.Dot(centerToOrigin); // TODO: check correctness
+        float b = 2 * ray.Direction.Dot(centerToOrigin);
         float c = centerToOrigin.Dot(centerToOrigin) - (Radius * Radius);
 
         float D = b * b - 4 * a * c;
@@ -34,5 +34,13 @@ internal class Sphere : IIntersectable
         float closestT = (- b - (float)Math.Sqrt(D)) / (2 * a);
 
         return ray.Origin + (ray.Direction * closestT);
+    }
+
+    // NOTE: need to normalize?
+    public Vector3D GetNormalVector(Point3D point)
+    {
+        Vector3D normalVector = new Vector3D(Center, point).Normalized();
+
+        return normalVector;
     }
 }
