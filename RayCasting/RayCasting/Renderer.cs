@@ -32,21 +32,21 @@ internal class Renderer
 
         // adding half of angle to target the middle of pixel
         (float alpha, float beta, float gamma) leftTopmostPixelAngles = (
-            cameraDirectionAngles.alpha - pixelWidthAngle * Scene.Screen.Width / 2, // + pixelWidthAngle / 2,
-            cameraDirectionAngles.beta + pixelHeightAngle * Scene.Screen.Height / 2, // + pixelWidthAngle / 2,
+            cameraDirectionAngles.alpha + pixelWidthAngle * Scene.Screen.Width / 2, // + pixelWidthAngle / 2,
+            cameraDirectionAngles.beta - pixelHeightAngle * Scene.Screen.Height / 2, // + pixelWidthAngle / 2,
             cameraDirectionAngles.gamma);;
 
         for (int i = 0; i < image.GetLength(0); i++)
         {
             (float alpha, float beta, float gamma) leftSidePixelAngles = (
             leftTopmostPixelAngles.alpha,
-            leftTopmostPixelAngles.beta - pixelHeightAngle * i,
+            leftTopmostPixelAngles.beta + pixelHeightAngle * i,
             leftTopmostPixelAngles.gamma);
 
             for (int j = 0; j < image.GetLength(1); j++)
             {
                 (float alpha, float beta, float gamma) currentPixelAngles = (
-                    leftSidePixelAngles.alpha + pixelWidthAngle * j,
+                    leftSidePixelAngles.alpha - pixelWidthAngle * j,
                     leftSidePixelAngles.beta,
                     leftSidePixelAngles.gamma);
                 //Point3D pixelPoint = new(); // TODO: find pixel coords

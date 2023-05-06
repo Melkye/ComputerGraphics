@@ -23,12 +23,12 @@ internal class ConsoleWriter
             {
                 char symbol = image[i, j] switch
                 {
-                    // HACK: do smth with these values, it's .8, .5. .2 and .1 of 255
+                    // HACK: do smth with these values, it's .8, .5. and .2 of 255
                     >204 => '#',
                     >127 => 'O',
                     >51 => '*',
-                    >25 => '.',
-                    _ => ' '
+                    >0 => '.',
+                    0 => ' '
                 };
                 Console.Write(symbol);
             }
