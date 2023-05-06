@@ -2,14 +2,10 @@
 using RayCasting.Scenes;
 
 namespace RayCasting.Casters;
-// TODO: make light (color?) caster
 internal class LightNeglectingCaster : ICaster
 {
     //public byte Cast(Scene scene, Point3D screenPoint)
     //{
-    //    // TODO: make for several objects
-
-    //    // TODO: need to normalize??
     //    Vector3D rayDirection = new Vector3D(scene.Camera.Position, screenPoint);
     //    //    .Normalized();
     //    Ray3D ray = new(scene.Camera.Position, rayDirection);

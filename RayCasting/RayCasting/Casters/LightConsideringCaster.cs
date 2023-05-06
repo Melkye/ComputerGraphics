@@ -21,7 +21,9 @@ internal class LightConsideringCaster : ICaster
         //HACK do smth with normalization
         Vector3D normalizedLightRay = scene.LightSource.Direction.Normalized();
 
-        float brightnessMinusOneToOne = normalVectorAtIntersectPoint.Dot(normalizedLightRay);
+        // negating because need to calculate based on smaller angle between vecs
+        // but due to spacical configuration it will use larger one
+        float brightnessMinusOneToOne = -normalVectorAtIntersectPoint.Dot(normalizedLightRay);
 
         byte brightnessZeroTo255;
 
