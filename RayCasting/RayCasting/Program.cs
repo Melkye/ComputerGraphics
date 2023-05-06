@@ -5,6 +5,8 @@ using RayCasting.Figures;
 using RayCasting.Cameras;
 using RayCasting.Scenes;
 using RayCasting.Casters;
+using System.Net;
+using RayCasting.Writers;
 
 
 //var vec1Norm = new Vector3D(1, 0.5f, -1).Normalized();
@@ -17,24 +19,44 @@ using RayCasting.Casters;
 //var vec2 = new Vector3D(angles2);
 
 
-Camera cam1 = new(new(0, 0, -4), new(0, 0, -1), 45);
-Screen screen1 = new(cam1, 50, 50);
+Point3D coordOrigin = new(0, 0, 0);
+Vector3D negativeZedDirection = new(0, 0, -1);
+float fov = 45;
 
-Sphere sphere1 = new(new(0, 0, -5), 0.4f);
-//var bla = sphere1.GetIntersectionPoint(new(new(0, 0, 0), new(0.7745966f, -0.44721356f, 0.44721356f)));
+int hRes = 100;
+int wRes = hRes;
 
-Scene scene1 = new(cam1, null, screen1, sphere1);
+Camera cam1 = new(coordOrigin, negativeZedDirection, fov);
+Screen screen1 = new(cam1, hRes, wRes);
 
-Renderer renderer = new(scene1, new LightNeglectingCaster());
+
+Sphere sphere1 = new(new(0, 0, -3), 1f);
+
+
+//TODO plane.Point is not considered
+//TODO add check if points aren't on the same line
+Plane plane1 = new(new(0, 0, -1), new(1, 0, 0), new(0, 1, 0));
+
+Disk disk1 = new(new(0, 0, -2), 0.5f, new(4, 0, 1));
+
+//TODO lightSource.Position is not considered (for sphere only?)
+
+Point3D lightOrigin = new(-1, 4, 3); // test cases: (-10, 1, 1) (-1, 10, 1) (-1, 1, 1) (-1, 4, 3) (1, 1, -1)
+DirectedLightSource lightSource = new(lightOrigin, new(lightOrigin, new(0, 0, -1)));
+Scene scene1 = new(cam1, lightSource, screen1, sphere1);
+Scene scene2 = new(cam1, lightSource, screen1, plane1);
+Scene scene3 = new(cam1, lightSource, screen1, disk1);
+
+Renderer renderer = new(scene3, new LightNeglectingCaster());
+Renderer renderer2 = new(scene3, new LightConsideringCaster());
 
 byte[,] image = renderer.Render();
+byte[,] image2 = renderer2.Render();
 
-for (int i = 0; i < image.GetLength(0); i++)
-{
-    for (int j = 0; j < image.GetLength(1); j++)
-    {
-        char symbol = image[i, j] == 0 ? ' ' : '#';
-        Console.Write(symbol);
-    }
-    Console.Write('\n');
-}
+ConsoleWriter writer = new();
+
+writer.WriteNeglectingLight(image);
+
+Console.WriteLine("----------------------------------------------------");
+
+writer.Write(image2);
