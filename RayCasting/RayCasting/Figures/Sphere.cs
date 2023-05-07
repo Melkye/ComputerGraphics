@@ -10,7 +10,7 @@ public class Sphere : IIntersectable
     }
     public Point3D Center { get; }
     public float Radius { get; }
-    public Point3D? GetIntersectionPoint(Ray3D ray) // TODO bool?
+    public Point3D? GetIntersectionPoint(Ray3D ray)
     {
         // ray.dir^2 * t^2 + 2*ray.dir*(ray.origin - center) * t + (ray.origin - center)^2 - r^2 = 0
         
@@ -31,9 +31,18 @@ public class Sphere : IIntersectable
             return null;        
         }
 
-        float closestT = (- b - (float)Math.Sqrt(D)) / (2 * a);
+        float t = (- b - (float)Math.Sqrt(D)) / (2 * a);
 
-        return ray.Origin + (ray.Direction * closestT);
+        // if coeff is negative, sphere is in ray's opposite dir
+        if (t < 0)
+            t = (- b + (float)Math.Sqrt(D)) / (2 * a);
+
+        if (t < 0)
+            return null;
+
+        Point3D intersectionPoint = ray.Origin + (ray.Direction * t);
+
+        return intersectionPoint;
     }
 
     // NOTE: need to normalize?
