@@ -17,10 +17,9 @@ public class CastingTests
 
         Camera camera = new(coordOrigin, new(0, 0, -1), 60);
         DirectedLightSource lightSource = new(new(0, 1, 0), new(0, -1, 0));
-        Screen screen = new(camera, 100, 100);
         IIntersectable[] emptyFigureList = Array.Empty<IIntersectable>();
 
-        Scene scene = new(camera, lightSource, screen, emptyFigureList);
+        Scene scene = new(camera, lightSource, emptyFigureList);
 
         LightConsideringCaster caster = new();
 
@@ -41,13 +40,12 @@ public class CastingTests
 
         Camera camera = new(coordOrigin, new(0, 0, -1), 60);
         DirectedLightSource lightSource = new(new(0, 0, 0), new(0, 0, -1));
-        Screen screen = new(camera, 100, 100);
         IIntersectable[] figures = new IIntersectable[]
         {
             new Sphere(new(0, 0, -3), 1)
         };
 
-        Scene scene = new(camera, lightSource, screen, figures);
+        Scene scene = new(camera, lightSource, figures);
 
         LightConsideringCaster caster = new();
 

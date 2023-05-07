@@ -21,20 +21,20 @@ using RayCasting.Writers;
 
 Point3D coordOrigin = new(0, 0, 0);
 Vector3D negativeZedDirection = new(0, 0, -1);
-float fov = 50;
+float fov = 60;
 
 
 // TODO: fix case when hres != vres
+int vRes = 100;
 int hRes = 100;
-int wRes = hRes;
 
 Camera cam1 = new(coordOrigin, negativeZedDirection, fov);
-Screen screen1 = new(cam1, hRes, wRes);
 
 
 Sphere sphere1 = new(new(0, 0, -7), 1f);
 Sphere sphere2 = new(new(0.8f, 1, -5), 0.5f);
 Sphere sphere3 = new(new(0.5f, 0.5f, -2), 0.3f);
+Sphere sphere4 = new(new(1.2f, 1, -5), 0.5f);
 
 //TODO plane.Point is not considered
 //TODO add check if points aren't on the same line
@@ -58,9 +58,9 @@ DirectedLightSource downsideLight = new(new(), new(0, -1, 0));
 //Scene scene2 = new(cam1, lightSource, screen1, new() { plane1 });
 //Scene scene3 = new(cam1, lightSource, screen1, new() { disk1 });
 
-Scene scene4 = new(cam1, lightSource, screen1, figures);
+Scene scene4 = new(cam1, lightSource, figures);
 
-Scene scene5 = new(cam1, downsideLight, screen1,
+Scene scene5 = new(cam1, downsideLight,
     new IIntersectable[] {
         new Sphere(new(-1.5f, 1.5f, -5), 0.5f),
         new Sphere(new(0, 1.5f, -5), 0.5f),
@@ -79,14 +79,21 @@ Scene scene5 = new(cam1, downsideLight, screen1,
          // but it should be (?)
         new Plane(new(0, 0, -10), new(0, 10, 1))
     });
-;
-;
+
+//IIntersectable[] frogFigures = new IIntersectable[]
+//{
+//    new Sphere (new(0.8f, 1, -5), 0.5f),
+//    new Sphere (new(0.5f, 0.5f, -2), 0.3f),
+//    new Sphere(new(1.2f, 1, -5), 0.5f)
+//};
+
+//Scene frog = new(cam1, downsideLight, screen1, frogFigures);
 
 Renderer renderer = new(scene5, new LightNeglectingCaster());
 Renderer renderer2 = new(scene5, new LightConsideringCaster());
 
 //byte[,] image = renderer.Render();
-byte[,] image2 = renderer2.Render();
+byte[,] image2 = renderer2.Render(vRes, hRes);
 
 ConsoleWriter writer = new();
 

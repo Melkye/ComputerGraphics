@@ -16,24 +16,24 @@ public class Renderer
     public ICaster Caster { get; }
 
     // TODO: move pixel casting corresponding to cam pos and coords
-    public byte[,] Render () // TODO: change output to color?
+    public byte[,] Render (int height, int width) // TODO: change output to color?
     {
-        byte[,] image = new byte[Scene.Screen.Height, Scene.Screen.Width];
+        byte[,] image = new byte[height, width];
 
         // get vector with starting angle
         // move by alpha/width or alpha/height
 
         // TODO: change to hFov and vFov?
-        float pixelWidthAngle = (Scene.Camera.FieldOfView / Scene.Screen.Width) * (float)(Math.PI / 180);
-        float pixelHeightAngle = (Scene.Camera.FieldOfView / Scene.Screen.Height) * (float)(Math.PI / 180);
+        float pixelWidthAngle = (Scene.Camera.FieldOfView / width) * (float)(Math.PI / 180);
+        float pixelHeightAngle = (Scene.Camera.FieldOfView / height) * (float)(Math.PI / 180);
 
 
         (float alpha, float beta, float gamma) cameraDirectionAngles = Scene.Camera.Direction.GetAngles();
 
         // adding half of angle to target the middle of pixel
         (float alpha, float beta, float gamma) leftTopmostPixelAngles = (
-            cameraDirectionAngles.alpha + pixelWidthAngle * Scene.Screen.Width / 2, // + pixelWidthAngle / 2,
-            cameraDirectionAngles.beta - pixelHeightAngle * Scene.Screen.Height / 2, // + pixelWidthAngle / 2,
+            cameraDirectionAngles.alpha + pixelWidthAngle * width / 2, // + pixelWidthAngle / 2,
+            cameraDirectionAngles.beta - pixelHeightAngle * height / 2, // + pixelWidthAngle / 2,
             cameraDirectionAngles.gamma);;
 
         for (int i = 0; i < image.GetLength(0); i++)
