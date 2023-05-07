@@ -3,7 +3,7 @@ using RayCasting.Objects;
 using RayCasting.Scenes;
 
 namespace RayCasting;
-internal class Renderer
+public class Renderer
 {
     public Renderer(Scene scene, ICaster caster)
     {

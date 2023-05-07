@@ -3,7 +3,7 @@ using RayCasting.Lighting;
 using RayCasting.Cameras;
 
 namespace RayCasting.Scenes;
-internal class Scene
+public class Scene
 {
     public Scene(ICamera camera, ILightSource lightSource, IScreen screen, IIntersectable[] figures)
     {

@@ -1,5 +1,5 @@
 ﻿namespace RayCasting.Objects;
-internal readonly struct Vector3D
+public readonly struct Vector3D
 {
     public Vector3D(float x, float y, float z)
     {

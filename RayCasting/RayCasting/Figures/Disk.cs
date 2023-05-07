@@ -2,7 +2,7 @@
 using System.Numerics;
 
 namespace RayCasting.Figures;
-internal class Disk : IIntersectable
+public class Disk : IIntersectable
 {
     public Disk(Point3D center, float radius, Vector3D normalVector)
     {

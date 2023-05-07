@@ -2,7 +2,7 @@
 using RayCasting.Scenes;
 
 namespace RayCasting.Casters;
-internal class LightNeglectingCaster : ICaster
+public class LightNeglectingCaster : ICaster
 {
     //public byte Cast(Scene scene, Point3D screenPoint)
     //{

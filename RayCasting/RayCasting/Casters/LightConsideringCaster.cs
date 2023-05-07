@@ -4,7 +4,7 @@ using RayCasting.Scenes;
 
 namespace RayCasting.Casters;
 
-internal class LightConsideringCaster : ICaster
+public class LightConsideringCaster : ICaster
 {
     public byte Cast(Scene scene, (float, float, float) pixelAngles)
     {
@@ -24,7 +24,7 @@ internal class LightConsideringCaster : ICaster
                 continue;
 
             float distanceToFigure = scene.Camera.Position.GetDistance((Point3D)figureIntersectionPoint);
-            if (distanceToFigure >= distance) // UNDONE: =? compare brighness?
+            if (distanceToFigure >= distance)
                 continue;
 
             intersectionPoint = figureIntersectionPoint;
@@ -45,8 +45,10 @@ internal class LightConsideringCaster : ICaster
         // but due to spacical configuration it will use larger one
 
         float brightnessMinusOneToOne = -normalVectorAtIntersectPoint.Dot(normalizedLightRay);
+        if (brightnessMinusOneToOne <= 0f)
+            return 0;
 
-        byte brightnessZeroTo255 = Math.Max((byte)0, (byte)(brightnessMinusOneToOne * 255));
+        byte brightnessZeroTo255 = (byte)(brightnessMinusOneToOne * 255);
 
         return brightnessZeroTo255;
     }

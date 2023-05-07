@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using RayCasting.Objects;
 
 namespace RayCasting.Figures;
-internal class Plane : IIntersectable
+public class Plane : IIntersectable
 {
     public Plane(Point3D point, Vector3D normalVector)
     {
@@ -48,7 +48,7 @@ internal class Plane : IIntersectable
 
         float t = (planePointRadiusVec - rayPointRadiusVec).Dot(NormalVector) / rayNormalVecDotProduct;
 
-        if (t <= 0) // TODO: and == 0?
+        if (t < 0) // TODO: and == 0?
         {
             return null;
         }

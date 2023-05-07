@@ -1,7 +1,7 @@
 ﻿using RayCasting.Objects;
 
 namespace RayCasting.Cameras;
-internal class Camera : ICamera
+public class Camera : ICamera
 {
     public Camera(Point3D position, Vector3D direction, float fieldOfView)
     {

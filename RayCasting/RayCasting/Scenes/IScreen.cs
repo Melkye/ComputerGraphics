@@ -2,7 +2,7 @@
 
 namespace RayCasting.Scenes;
 
-internal interface IScreen
+public interface IScreen
 {
     ICamera Camera { get; }
     int Height { get; }

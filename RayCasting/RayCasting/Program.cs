@@ -21,8 +21,10 @@ using RayCasting.Writers;
 
 Point3D coordOrigin = new(0, 0, 0);
 Vector3D negativeZedDirection = new(0, 0, -1);
-float fov = 45;
+float fov = 50;
 
+
+// TODO: fix case when hres != vres
 int hRes = 100;
 int wRes = hRes;
 
@@ -51,22 +53,44 @@ IIntersectable[] figures = { sphere1, sphere2, sphere3, disk1, disk2 };
 Point3D lightOrigin = new(-1, 4, 3); // test cases: (-10, 1, 1) (-1, 10, 1) (-1, 1, 1) (-1, 4, 3) (1, 1, -1)
 DirectedLightSource lightSource = new(lightOrigin, new(lightOrigin, new(0, 0, -1)));
 
-
+DirectedLightSource downsideLight = new(new(), new(0, -1, 0));
 //Scene scene1 = new(cam1, lightSource, screen1, { sphere1 });
 //Scene scene2 = new(cam1, lightSource, screen1, new() { plane1 });
 //Scene scene3 = new(cam1, lightSource, screen1, new() { disk1 });
 
 Scene scene4 = new(cam1, lightSource, screen1, figures);
 
-Renderer renderer = new(scene4, new LightNeglectingCaster());
-Renderer renderer2 = new(scene4, new LightConsideringCaster());
+Scene scene5 = new(cam1, downsideLight, screen1,
+    new IIntersectable[] {
+        new Sphere(new(-1.5f, 1.5f, -5), 0.5f),
+        new Sphere(new(0, 1.5f, -5), 0.5f),
+        new Sphere(new(1.5f, 1.5f, -5), 0.5f),
+        new Sphere(new(-1.5f, 0, -5), 0.5f),
+        new Sphere(new(0, 0, -5), 0.5f),
+        new Sphere(new(1.5f, 0, -5), 0.5f),
+        new Sphere(new(-1.5f, -1.5f, -5), 0.5f),
+        new Sphere(new(0, -1.5f, -5), 0.5f),
+        new Sphere(new(1.5f, -1.5f, -5), 0.5f),
 
-byte[,] image = renderer.Render();
+        new Disk(new(0, 0, -10), 2, new(0, 1, 1)),
+
+         // NOTE: normalVec is the same in each point, so when rendering each pixel cam ray goes through its angle values
+         // and after one moment angle between ray and normalVec becomes < 90 -> negative cos(<90) -> negative val -> plane is not observed
+         // but it should be (?)
+        new Plane(new(0, 0, -10), new(0, 10, 1))
+    });
+;
+;
+
+Renderer renderer = new(scene5, new LightNeglectingCaster());
+Renderer renderer2 = new(scene5, new LightConsideringCaster());
+
+//byte[,] image = renderer.Render();
 byte[,] image2 = renderer2.Render();
 
 ConsoleWriter writer = new();
 
-writer.WriteNeglectingLight(image);
+//writer.WriteNeglectingLight(image);
 
 Console.WriteLine("----------------------------------------------------");
 

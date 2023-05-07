@@ -1,6 +1,6 @@
 ﻿
 namespace RayCasting.Writers;
-internal class ConsoleWriter
+public class ConsoleWriter
 {
     public void WriteNeglectingLight(byte[,] image)
     {

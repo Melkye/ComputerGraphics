@@ -1,5 +1,5 @@
 ﻿namespace RayCasting.Objects;
-internal readonly struct Point3D
+public readonly struct Point3D
 {
     public Point3D(float x, float y, float z)
     {

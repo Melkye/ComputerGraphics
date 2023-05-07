@@ -1,7 +1,7 @@
 ﻿using RayCasting.Objects;
 
 namespace RayCasting.Figures;
-internal interface IIntersectable
+public interface IIntersectable
 {
     Point3D? GetIntersectionPoint(Ray3D ray);
 

@@ -3,7 +3,7 @@
 namespace RayCasting.Lighting;
 
 // UNDONE: make it not one directional etc
-internal interface ILightSource
+public interface ILightSource
 {
     public Point3D Origin { get; }
     public Vector3D Direction { get; }

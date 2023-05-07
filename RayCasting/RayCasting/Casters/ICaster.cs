@@ -2,7 +2,7 @@
 using RayCasting.Scenes;
 
 namespace RayCasting.Casters;
-internal interface ICaster
+public interface ICaster
 {
     // TODO: shouldn't it take pos + dir as parameters? not from scene
     // to be able to cast camera and light??

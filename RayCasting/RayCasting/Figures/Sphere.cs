@@ -1,7 +1,7 @@
 ﻿using RayCasting.Objects;
 
 namespace RayCasting.Figures;
-internal class Sphere : IIntersectable
+public class Sphere : IIntersectable
 {
     public Sphere(Point3D center, float radius)
     {

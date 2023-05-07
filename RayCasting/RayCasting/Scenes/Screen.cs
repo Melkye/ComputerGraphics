@@ -3,7 +3,7 @@ using RayCasting.Objects;
 using RayCasting.Cameras;
 
 namespace RayCasting.Scenes;
-internal class Screen : IScreen
+public class Screen : IScreen
 {
     public Screen(ICamera camera, int height, int width)
     {

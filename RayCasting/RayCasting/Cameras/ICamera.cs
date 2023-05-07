@@ -1,7 +1,7 @@
 ﻿using RayCasting.Objects;
 
 namespace RayCasting.Cameras;
-internal interface ICamera
+public interface ICamera
 {
     Point3D Position { get; }
 

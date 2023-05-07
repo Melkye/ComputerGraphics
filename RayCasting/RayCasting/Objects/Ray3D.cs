@@ -1,5 +1,5 @@
 ﻿namespace RayCasting.Objects;
-internal readonly struct Ray3D
+public readonly struct Ray3D
 {
     public Ray3D(Point3D origin, Vector3D direction)
     {
