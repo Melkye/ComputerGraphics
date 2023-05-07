@@ -18,7 +18,7 @@ public class IntersectionTests
         Sphere sphere = new(coordOrigin, 1f);
 
         Ray3D ray = new(coordOrigin, new(0, 0, -1));
-
+         
         // Act
         Point3D? intersectionPoint = sphere.GetIntersectionPoint(ray);
 
