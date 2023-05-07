@@ -6,5 +6,6 @@ namespace RayCasting.Lighting;
 public interface ILightSource
 {
     public Point3D Origin { get; }
+
     public Vector3D Direction { get; }
 }

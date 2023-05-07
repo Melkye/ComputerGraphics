@@ -1,7 +1,7 @@
 ﻿using RayCasting.Objects;
 
 namespace RayCasting.Lighting;
-public class DirectedLightSource : ILightSource// UNDONE: : Ray3D, ILightSource
+public class DirectedLightSource : ILightSource
 {
     public DirectedLightSource(Point3D origin, Vector3D direction)
     {

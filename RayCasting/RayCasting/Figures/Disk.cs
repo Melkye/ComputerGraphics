@@ -10,8 +10,11 @@ public class Disk : IIntersectable
         Radius = radius;
         NormalVector = normalVector;
     }
+
     public Point3D Center { get; set; }
+
     public float Radius { get; set; }
+
     public Vector3D NormalVector { get; set; }
 
     public Point3D? GetIntersectionPoint(Ray3D ray)

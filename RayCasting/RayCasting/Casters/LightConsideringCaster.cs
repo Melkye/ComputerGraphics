@@ -6,7 +6,7 @@ namespace RayCasting.Casters;
 
 public class LightConsideringCaster : ICaster
 {
-    public byte Cast(Scene scene, (float, float, float) pixelAngles)
+    public byte Cast(Scene scene, (float alpha, float beta, float gamma) pixelAngles)
     {
         Vector3D rayDirection = new(pixelAngles);
 
