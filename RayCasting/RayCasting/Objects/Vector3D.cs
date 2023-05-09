@@ -22,7 +22,6 @@ public readonly struct Vector3D
         Z = copyFrom.Z;
     }
 
-    // TODO: refactor to use this constructor instead of (p.x, p.y, p.z)
     public Vector3D(Point3D pointFrom)
     {
         X = pointFrom.X;
@@ -30,7 +29,6 @@ public readonly struct Vector3D
         Z = pointFrom.Z;
     }
 
-    // TODO: factor out angles to a separate class
     public Vector3D((float alpha, float beta, float gamma) angles)
     {
         X = (float)Math.Cos(angles.alpha);

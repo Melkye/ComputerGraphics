@@ -9,14 +9,11 @@ public class Scene
     {
         Camera = camera;
         LightSource = lightSource;
-        //Screen = screen;
         Figures = figures;
     }
     public ICamera Camera { get; }
 
-    public ILightSource LightSource { get; } // TODO: make several sources
+    public ILightSource LightSource { get; }
 
     public IIntersectable[] Figures { get; }
-
-    //public IScreen Screen { get; }
 }

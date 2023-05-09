@@ -14,6 +14,7 @@ public class Plane : IIntersectable
         NormalVector = normalVector.Normalized();
     }
 
+    //TODO add check if points aren't on the same line
     public Plane(Point3D pointA, Point3D pointB, Point3D pointC)
     {
         Point = pointA;
@@ -24,8 +25,6 @@ public class Plane : IIntersectable
 
         NormalVector = normalVec;
     }
-
-    // NOTE: consider switching to Ray instead of Point and Vector pair here and everywhere
 
     public Point3D Point { get; }
 
@@ -39,16 +38,12 @@ public class Plane : IIntersectable
             return null;
         }
 
-        // (plainNormalPointRadiusVec - plainAnyPointRadiusVec)
-        // = vector that lays in plane and its starting point is intersection point
+        Vector3D planePointRadiusVec = new(Point);
+        Vector3D rayOriginRadiusVec = new(ray.Origin);
 
-        //Vector3D rayRadiusVec = new Vector3D(ray.Position.X, ray.Position.Y, ray.Position.Z);
-        Vector3D planePointRadiusVec = new(Point.X, Point.Y, Point.Z);
-        Vector3D rayPointRadiusVec = new(ray.Origin.X, ray.Origin.Y, ray.Origin.Z);
+        float t = (planePointRadiusVec - rayOriginRadiusVec).Dot(NormalVector) / rayNormalVecDotProduct;
 
-        float t = (planePointRadiusVec - rayPointRadiusVec).Dot(NormalVector) / rayNormalVecDotProduct;
-
-        if (t < 0) // TODO: and == 0?
+        if (t < 0)
         {
             return null;
         }

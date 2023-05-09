@@ -24,8 +24,8 @@ public class CastingTests
         LightConsideringCaster caster = new();
 
         (float, float, float) pixelAngles = camera.Direction.GetAngles();
-        // Act
 
+        // Act
         byte brightness = caster.Cast(scene, pixelAngles);
 
         // Assert
@@ -33,7 +33,7 @@ public class CastingTests
     }
 
     [Test]
-    public void LightPerpendicularToFigure_Cast_Returns255()
+    public void LightPerpendicularToSphere_Cast_Returns255()
     {
         // Arrange
         Point3D coordOrigin = new(0, 0, 0);
@@ -50,8 +50,8 @@ public class CastingTests
         LightConsideringCaster caster = new();
 
         (float, float, float) pixelAngles = camera.Direction.GetAngles();
-        // Act
 
+        // Act
         byte brightness = caster.Cast(scene, pixelAngles);
 
         // Assert

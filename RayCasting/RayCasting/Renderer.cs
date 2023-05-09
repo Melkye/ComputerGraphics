@@ -7,7 +7,7 @@ public class Renderer
 {
     public Renderer(Scene scene, ICaster caster)
     {
-        Scene = scene; // TODO: create copy constructors?
+        Scene = scene;
         Caster = caster;
     }
 
@@ -15,26 +15,18 @@ public class Renderer
 
     public ICaster Caster { get; }
 
-    // TODO: move pixel casting corresponding to cam pos and coords
-    public byte[,] Render (int height, int width) // TODO: change output to color?
+    public byte[,] Render (int height, int width)
     {
         byte[,] image = new byte[height, width];
-
-        // get vector with starting angle
-        // move by alpha/width or alpha/height
-
-        // TODO: change to hFov and vFov?
-        float pixelWidthAngle = (Scene.Camera.FieldOfView / width) * (float)(Math.PI / 180);
-        float pixelHeightAngle = (Scene.Camera.FieldOfView / height) * (float)(Math.PI / 180);
-
+        float pixelWidthAngle = Scene.Camera.FieldOfView / width * (float)(Math.PI / 180);
+        float pixelHeightAngle = Scene.Camera.FieldOfView / height * (float)(Math.PI / 180);
 
         (float alpha, float beta, float gamma) cameraDirectionAngles = Scene.Camera.Direction.GetAngles();
 
-        // adding half of angle to target the middle of pixel
         (float alpha, float beta, float gamma) leftTopmostPixelAngles = (
-            cameraDirectionAngles.alpha + pixelWidthAngle * width / 2, // + pixelWidthAngle / 2,
-            cameraDirectionAngles.beta - pixelHeightAngle * height / 2, // + pixelWidthAngle / 2,
-            cameraDirectionAngles.gamma);;
+            cameraDirectionAngles.alpha + pixelWidthAngle * width / 2,
+            cameraDirectionAngles.beta - pixelHeightAngle * height / 2,
+            cameraDirectionAngles.gamma);
 
         for (int i = 0; i < image.GetLength(0); i++)
         {
@@ -49,15 +41,11 @@ public class Renderer
                     leftSidePixelAngles.alpha - pixelWidthAngle * j,
                     leftSidePixelAngles.beta,
                     leftSidePixelAngles.gamma);
-                //Point3D pixelPoint = new(); // TODO: find pixel coords
-                //image[i, j] = Caster.Cast(Scene, pixelPoint);
 
-                // TODO: create with pixel angle
                 image[i, j] = Caster.Cast(Scene, currentPixelAngles);
             }
         }
 
         return image;
     }
-    
 }
