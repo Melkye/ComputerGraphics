@@ -9,6 +9,9 @@ public class Image
     public Pixel this[int i,int j] => pixelMap[i,j]; 
     public Image(Pixel[,] pixelMap)
     {
-        this.pixelMap = pixelMap;
+        int width = pixelMap.GetLength(0);
+        int height = pixelMap.GetLength(1);
+        this.pixelMap = new Pixel[width, height];
+        Array.Copy(pixelMap, this.pixelMap, width * height);
     }
 }
