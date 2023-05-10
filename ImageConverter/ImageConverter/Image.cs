@@ -1,16 +1,14 @@
-﻿using System.Reflection.Metadata.Ecma335;
-
-namespace ImageConverter;
+﻿namespace ImageConverter;
 
 public class Image
 {
-    private Pixel[,] pixelmap;
-    public int ColorMaxValue { get => 255; }
-    public int Hieght => pixelmap.GetLength(0);
-    public int Width => pixelmap.GetLength(1);
-    public Pixel this[int i,int j] => pixelmap[i,j]; 
-    public Image(Pixel[,] pixelmap)
+    private Pixel[,] pixelMap;
+    public int ColorMaxValue => 255;
+    public int Height => pixelMap.GetLength(0);
+    public int Width => pixelMap.GetLength(1);
+    public Pixel this[int i,int j] => pixelMap[i,j]; 
+    public Image(Pixel[,] pixelMap)
     {
-        this.pixelmap = pixelmap;
+        this.pixelMap = pixelMap;
     }
 }
