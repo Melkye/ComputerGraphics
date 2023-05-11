@@ -41,8 +41,10 @@ namespace ImageConverter.Bmp
                 BmpInfoHeader bmpInfoHeader = ReadInfoHeader(fileStream);
                 
                 pixelMap = new Pixel[bmpInfoHeader.Height, bmpInfoHeader.Width];
-
-                ReadPixelMatrix(ref pixelMap, bmpInfoHeader, fileStream);
+                if(bmpInfoHeader.Height > 0)
+                    ReadPixelMatrix(ref pixelMap, bmpInfoHeader, fileStream);
+                else
+                    ReadPixelMatrixReverse(ref pixelMap, bmpInfoHeader, fileStream);
             }
             return new Image(pixelMap);
         }
@@ -94,6 +96,17 @@ namespace ImageConverter.Bmp
             int rowPaddingSizeBits = bitsInRow % 32 == 0 ? 0 : 32 - bitsInRow % 32;
             int rowPaddingSizeInBytes = rowPaddingSizeBits / 8;
             for (int i = bmpInfoHeader.Height - 1; i >= 0; i--)
+            {
+                ReadPixelRow(ref pixelMap, i, bmpInfoHeader, fileStream);
+                fileStream.Position += rowPaddingSizeInBytes;
+            }
+        }
+        private void ReadPixelMatrixReverse(ref Pixel[,] pixelMap, BmpInfoHeader bmpInfoHeader, FileStream fileStream)
+        {
+            int bitsInRow = bmpInfoHeader.Width * bmpInfoHeader.BitsPerPixel;
+            int rowPaddingSizeBits = bitsInRow % 32 == 0 ? 0 : 32 - bitsInRow % 32;
+            int rowPaddingSizeInBytes = rowPaddingSizeBits / 8;
+            for (int i = 0; i < -bmpInfoHeader.Height; i++)
             {
                 ReadPixelRow(ref pixelMap, i, bmpInfoHeader, fileStream);
                 fileStream.Position += rowPaddingSizeInBytes;
