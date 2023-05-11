@@ -34,6 +34,10 @@ namespace ImageConverter.Bmp
         }
         public void Write(Image image, string destination)
         {
+            if(!File.Exists(destination)) 
+            {
+                File.Create(destination).Dispose();
+            }
             using (var fileStream = new FileStream(destination, FileMode.Truncate, FileAccess.Write))
             {
                 //Info about pixel array row size
