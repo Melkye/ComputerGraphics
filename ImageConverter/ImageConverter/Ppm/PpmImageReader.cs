@@ -10,10 +10,10 @@ public class PpmImageReader : IImageReader
         using (StreamReader streamReader = new StreamReader(source))
         {
             string fileFormatNumber = ReadUntilDelimiter(streamReader);
-            //TODO: ensure that fileFormatNumber P3
+            if (fileFormatNumber != "P3")
+                throw new ArgumentException("This file is not plain PPM format");
             int width = int.Parse(ReadUntilDelimiter(streamReader));
             int height = int.Parse(ReadUntilDelimiter(streamReader));
-            //TODO: think about using colorDepth
             int colorDepth = int.Parse(ReadUntilDelimiter(streamReader));
             pixelmap = new Pixel[height, width];
             for (int i = 0; i < height; i++)
