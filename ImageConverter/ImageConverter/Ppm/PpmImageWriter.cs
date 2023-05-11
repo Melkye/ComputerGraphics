@@ -7,8 +7,8 @@ public class PpmImageWriter : IImageWriter
     {
         StreamWriter streamWriter = new StreamWriter(destination);
         streamWriter.Write(fileFormatNumber.ToString() + "\n");
-        streamWriter.Write(image.Height.ToString() + " ");
-        streamWriter.Write(image.Width.ToString() + "\n");
+        streamWriter.Write(image.Width.ToString() + " ");
+        streamWriter.Write(image.Height.ToString() + "\n");
         streamWriter.Write(image.ColorMaxValue.ToString() + "\n");
         for (int i = 0; i < image.Height; i++)
         {
