@@ -1,4 +1,6 @@
-﻿namespace ImageConverter.Ppm;
+﻿using System.Text;
+
+namespace ImageConverter.Ppm;
 
 public class PpmImageReader : IImageReader
 {
