@@ -23,12 +23,12 @@ namespace ImageConverter.Bmp
         {
             public int Width { get; }
             public int Height { get; }
-            public int BitsPerPixel { get;  }
-            public BmpInfoHeader(int height, int width, int bitsPerPixel)
+            public short BitsPerPixel { get;  }
+            public BmpInfoHeader(int height, int width, short bitsPerPixel)
             {
                 Width = width;
                 Height = height;
-                BitsPerPixel = bitsPerPixel;           
+                BitsPerPixel = bitsPerPixel;        
             }
         }
         public Image Read(string source)
@@ -41,6 +41,7 @@ namespace ImageConverter.Bmp
                 BmpInfoHeader bmpInfoHeader = ReadInfoHeader(fileStream);
                 
                 pixelMap = new Pixel[bmpInfoHeader.Height, bmpInfoHeader.Width];
+
                 if(bmpInfoHeader.Height > 0)
                     ReadPixelMatrix(ref pixelMap, bmpInfoHeader, fileStream);
                 else
