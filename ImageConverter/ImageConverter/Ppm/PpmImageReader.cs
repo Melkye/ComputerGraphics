@@ -4,30 +4,38 @@ namespace ImageConverter.Ppm;
 
 public class PpmImageReader : IImageReader
 {
+    private const string fileFormatNumber = "P3";
     public Image Read(string source)
     {
         Pixel[,] pixelmap;
         using (StreamReader streamReader = new StreamReader(source))
         {
-            string fileFormatNumber = ReadUntilDelimiter(streamReader);
-            if (fileFormatNumber != "P3")
-                throw new ArgumentException("This file is not plain PPM format");
-            int width = int.Parse(ReadUntilDelimiter(streamReader));
-            int height = int.Parse(ReadUntilDelimiter(streamReader));
-            int colorDepth = int.Parse(ReadUntilDelimiter(streamReader));
-            pixelmap = new Pixel[height, width];
-            for (int i = 0; i < height; i++)
+            try
             {
-                for (int j = 0; j < width; j++)
+                string fileFormatNumberInFile = ReadUntilDelimiter(streamReader);
+                if (fileFormatNumberInFile != fileFormatNumber)
+                    throw new ArgumentException("This file is not plain PPM format");
+                int width = int.Parse(ReadUntilDelimiter(streamReader));
+                int height = int.Parse(ReadUntilDelimiter(streamReader));
+                int colorDepth = int.Parse(ReadUntilDelimiter(streamReader));
+                pixelmap = new Pixel[height, width];
+                for (int i = 0; i < height; i++)
                 {
-                    string red = ReadUntilDelimiter(streamReader);
-                    byte redValue = byte.Parse(red);
-                    string green = ReadUntilDelimiter(streamReader);
-                    byte greenValue = byte.Parse(green);
-                    string blue = ReadUntilDelimiter(streamReader);
-                    byte blueValue = byte.Parse(blue);
-                    pixelmap[i, j] = new Pixel(redValue, greenValue, blueValue);
+                    for (int j = 0; j < width; j++)
+                    {
+                        string red = ReadUntilDelimiter(streamReader);
+                        byte redValue = byte.Parse(red);
+                        string green = ReadUntilDelimiter(streamReader);
+                        byte greenValue = byte.Parse(green);
+                        string blue = ReadUntilDelimiter(streamReader);
+                        byte blueValue = byte.Parse(blue);
+                        pixelmap[i, j] = new Pixel(redValue, greenValue, blueValue);
+                    }
                 }
+            }
+            catch (Exception ex) when (ex is not ArgumentException)
+            {
+                throw new ArgumentException("File is corrupted");
             }
         }
         return new Image(pixelmap);
@@ -56,7 +64,7 @@ public class PpmImageReader : IImageReader
     private void SkipToEndOfLine(StreamReader stream)
     {
         char currentChar = (char)stream.Read();
-        while (currentChar != '\n')
+        while (currentChar != '\n' || stream.EndOfStream)
             currentChar = (char)stream.Read();
     }
 }
