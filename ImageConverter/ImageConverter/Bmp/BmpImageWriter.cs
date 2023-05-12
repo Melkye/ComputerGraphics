@@ -8,6 +8,7 @@ namespace ImageConverter.Bmp
 {
     public class BmpImageWriter : IImageWriter
     {
+        private const string fileFormatSignature = "BM";
         public void Write(Image image, string destination)
         {
             if(!File.Exists(destination)) 
@@ -51,7 +52,8 @@ namespace ImageConverter.Bmp
                         byte red = image[i, j].Red;
                         WriteInt8(red, fileStream);
                     }
-                    fileStream.Position += rowPaddingSizeInBytes; 
+                    byte[] rowPaddingBytes = new byte[rowPaddingSizeInBytes];
+                    fileStream.Write(rowPaddingBytes);
                 }
             }
         }
