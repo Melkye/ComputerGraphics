@@ -90,9 +90,11 @@ namespace ImageConverter.Bmp
             int compression = 0;
             WriteInt32(compression, fileStream);
 
-            int imageSizeCompressed = 0;
-            WriteInt32(imageSizeCompressed, fileStream);
+            int bytesInRow = width * infoHeader.BitsPerPixel / 8;
+            int rowPaddingSizeBytes = bytesInRow % 4 == 0 ? 0 : 4 - bytesInRow % 4;
 
+            int imageSize = height * (bytesInRow + rowPaddingSizeBytes);
+            WriteInt32(imageSize, fileStream);
             int XpixelsPerM = 0;
             WriteInt32(XpixelsPerM, fileStream);
 
