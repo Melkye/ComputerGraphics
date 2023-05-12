@@ -17,14 +17,16 @@ namespace ImageConverter.Bmp
             using (var fileStream = new FileStream(destination, FileMode.Truncate, FileAccess.Write))
             {
                 //Info about pixel array row size
+                int width = image.Width;
+                int height = image.Height;
                 short bitsPerPixel = 3 * 8;
-                int bitsInRow = image.Width * bitsPerPixel;
-                int rowPaddingSizeBits = bitsInRow % 32 == 0 ? 0 : 32 - bitsInRow % 32;
-                int rowPaddingSizeInBytes = rowPaddingSizeBits / 8;
+                short amountBitsInByte = 8;
+                int bytesInRow = width * bitsPerPixel / amountBitsInByte;
+                int rowPaddingSizeInBytes = bytesInRow % 4 == 0 ? 0 : 4 - bytesInRow % 4;
 
                 int fileHeaderSize = 14;
                 int infoHeaderSize = 40;
-                int fileSize = fileHeaderSize * 8 + infoHeaderSize * 8 + image.Height * (bitsInRow + rowPaddingSizeBits);
+                int fileSize = fileHeaderSize + infoHeaderSize + height * (bytesInRow + rowPaddingSizeInBytes);
                 int dataOffset = fileHeaderSize + infoHeaderSize;
                 BmpFileHeader fileHeader = new BmpFileHeader(signature : "BM", fileSize, dataOffset);
 
