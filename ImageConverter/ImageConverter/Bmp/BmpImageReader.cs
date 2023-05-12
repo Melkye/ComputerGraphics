@@ -130,29 +130,29 @@ namespace ImageConverter.Bmp
         }
         private int ReadInt32(FileStream fileStream)
         {
-            byte[] int32Bytes = new byte[4];
-            fileStream.Read(int32Bytes);
-            int result = BinaryPrimitives.ReadInt32LittleEndian(int32Bytes);
+            byte[] int32SplitIntoFourBytes = new byte[4];
+            fileStream.Read(int32SplitIntoFourBytes);
+            int result = BinaryPrimitives.ReadInt32LittleEndian(int32SplitIntoFourBytes);
             return result;
         }
         private short ReadInt16(FileStream fileStream)
         {
-            byte[] int16Bytes = new byte[2];
-            fileStream.Read(int16Bytes);
-            short result = BinaryPrimitives.ReadInt16LittleEndian(int16Bytes);
+            byte[] int16SplitIntoTwoBytes = new byte[2];
+            fileStream.Read(int16SplitIntoTwoBytes);
+            short result = BinaryPrimitives.ReadInt16LittleEndian(int16SplitIntoTwoBytes);
             return result;
         }
         private byte ReadInt8(FileStream fileStream)
         {
-            byte[] int8Bytes = new byte[1];
-            fileStream.Read(int8Bytes);
-            return int8Bytes[0];
+            byte[] int8SplitIntoByte = new byte[1];
+            fileStream.Read(int8SplitIntoByte);
+            return int8SplitIntoByte[0];
         }
         private string ReadString(int size, Encoding encoding, FileStream fileStream)
         {
-            byte[] stringBytes = new byte[size];
-            fileStream.Read(stringBytes);
-            string result = encoding.GetString(stringBytes);
+            byte[] stringSplitIntoSizeBytes = new byte[size];
+            fileStream.Read(stringSplitIntoSizeBytes);
+            string result = encoding.GetString(stringSplitIntoSizeBytes);
             return result;
         }
     }
