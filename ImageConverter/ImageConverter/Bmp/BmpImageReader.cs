@@ -36,16 +36,27 @@ namespace ImageConverter.Bmp
             Pixel[,] pixelMap;
             using(var fileStream = new FileStream(source, FileMode.Open, FileAccess.Read))
             {
-                BmpFileHeader fileHeaderInfo = ReadFileHeader(fileStream);
+                try
+                {
+                    BmpFileHeader fileHeaderInfo = ReadFileHeader(fileStream);
 
-                BmpInfoHeader bmpInfoHeader = ReadInfoHeader(fileStream);
-                
-                pixelMap = new Pixel[bmpInfoHeader.Height, bmpInfoHeader.Width];
+                    BmpInfoHeader bmpInfoHeader = ReadInfoHeader(fileStream);
 
-                if(bmpInfoHeader.Height > 0)
-                    ReadPixelMatrix(ref pixelMap, bmpInfoHeader, fileStream);
-                else
-                    ReadPixelMatrixReverse(ref pixelMap, bmpInfoHeader, fileStream);
+                    pixelMap = new Pixel[bmpInfoHeader.Height, bmpInfoHeader.Width];
+
+                    if (bmpInfoHeader.Height > 0)
+                        ReadPixelMatrix(ref pixelMap, bmpInfoHeader, fileStream);
+                    else
+                        ReadPixelMatrixReverse(ref pixelMap, bmpInfoHeader, fileStream);
+                } 
+                catch(ArgumentException e)
+                {
+                    throw e;
+                } 
+                catch(Exception e)
+                {
+                    throw new ArgumentException("File is corrupted : " + e.Message);
+                }
             }
             return new Image(pixelMap);
         }
