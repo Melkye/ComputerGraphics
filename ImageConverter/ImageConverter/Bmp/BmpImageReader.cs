@@ -7,30 +7,6 @@ namespace ImageConverter.Bmp
 {
     public class BmpImageReader : IImageReader
     {
-        struct BmpFileHeader
-        {
-            public string Signature { get; }
-            public int FileSize { get; }
-            public int DataOffset { get; }
-            public BmpFileHeader(string signature, int fileSize, int dataOffset)
-            {
-                Signature = signature;
-                FileSize = fileSize;
-                DataOffset = dataOffset;
-            }
-        }
-        struct BmpInfoHeader 
-        {
-            public int Width { get; }
-            public int Height { get; }
-            public short BitsPerPixel { get;  }
-            public BmpInfoHeader(int height, int width, short bitsPerPixel)
-            {
-                Width = width;
-                Height = height;
-                BitsPerPixel = bitsPerPixel;        
-            }
-        }
         public Image Read(string source)
         {
             Pixel[,] pixelMap;

@@ -8,30 +8,6 @@ namespace ImageConverter.Bmp
 {
     public class BmpImageWriter : IImageWriter
     {
-        struct BmpFileHeader
-        {
-            public string Signature { get; }
-            public int FileSize { get; }
-            public int DataOffset { get; }
-            public BmpFileHeader(string signature, int fileSize, int dataOffset)
-            {
-                Signature = signature;
-                FileSize = fileSize;
-                DataOffset = dataOffset;
-            }
-        }
-        struct BmpInfoHeader
-        {
-            public int Width { get; }
-            public int Height { get; }
-            public short BitsPerPixel { get; }
-            public BmpInfoHeader(int height, int width, short bitsPerPixel)
-            {
-                Width = width;
-                Height = height;
-                BitsPerPixel = bitsPerPixel;
-            }
-        }
         public void Write(Image image, string destination)
         {
             if(!File.Exists(destination)) 
