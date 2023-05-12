@@ -42,14 +42,14 @@ namespace ImageConverter.Bmp
             if (signature != "BM")
                 throw new ArgumentException("This format of BMP is not supported");
 
-            int fileSize = ReadInt32(fileStream);
+            int fileSizeInBytes = ReadInt32(fileStream);
 
             //there must be reserved 4 bytes
             fileStream.Position += 4;
 
             int dataOffset = ReadInt32(fileStream);
 
-            return new BmpFileHeader(signature, fileSize, dataOffset);
+            return new BmpFileHeader(signature, fileSizeInBytes, dataOffset);
         }
         private BmpInfoHeader ReadInfoHeader(FileStream fileStream)
         {
@@ -71,7 +71,7 @@ namespace ImageConverter.Bmp
             if (compression != 0)
                 throw new ArgumentException("Reader can`t read .bmp with image compression");
 
-            int imageSizeCompressed = ReadInt32(fileStream);
+            int imageSize = ReadInt32(fileStream);
 
             int XpixelsPerM = ReadInt32(fileStream);
 
@@ -85,8 +85,8 @@ namespace ImageConverter.Bmp
         }
         private void ReadPixelMatrix(ref Pixel[,] pixelMap, BmpInfoHeader bmpInfoHeader, FileStream fileStream)
         {
-            int bitsInRow = bmpInfoHeader.Width * bmpInfoHeader.BitsPerPixel;
-            int rowPaddingSizeBits = bitsInRow % 32 == 0 ? 0 : 32 - bitsInRow % 32;
+            int bytesInRow = bmpInfoHeader.Width * bmpInfoHeader.BitsPerPixel / 8;
+            int rowPaddingSizeInBytes = bytesInRow % 4 == 0 ? 0 : 4 - bytesInRow % 4;
             int rowPaddingSizeInBytes = rowPaddingSizeBits / 8;
             for (int i = bmpInfoHeader.Height - 1; i >= 0; i--)
             {
@@ -96,8 +96,8 @@ namespace ImageConverter.Bmp
         }
         private void ReadPixelMatrixReverse(ref Pixel[,] pixelMap, BmpInfoHeader bmpInfoHeader, FileStream fileStream)
         {
-            int bitsInRow = bmpInfoHeader.Width * bmpInfoHeader.BitsPerPixel;
-            int rowPaddingSizeBits = bitsInRow % 32 == 0 ? 0 : 32 - bitsInRow % 32;
+            int bytesInRow = bmpInfoHeader.Width * bmpInfoHeader.BitsPerPixel / 8;
+            int rowPaddingSizeInBytes = bytesInRow % 4 == 0 ? 0 : 4 - bytesInRow % 4;
             int rowPaddingSizeInBytes = rowPaddingSizeBits / 8;
             for (int i = 0; i < -bmpInfoHeader.Height; i++)
             {
