@@ -66,29 +66,44 @@ namespace ImageConverter.Bmp
         }
         private BmpInfoHeader ReadInfoHeader(FileStream fileStream)
         {
-            //InfoHeader
-            //TODO: Check that InfoHeader size == 40
             int infoHeaderSize = ReadInt32(fileStream);
-
+            if (infoHeaderSize != 40)
+                throw new ArgumentException("Reader can read .bmp only where infoHeaderSize is 40");
             int width = ReadInt32(fileStream);
 
             int height = ReadInt32(fileStream);
 
             short planes = ReadInt16(fileStream);
-            //TODO: Check that bitsPerPixel is not supported(supported: 24)
+            if (planes != 1)
+                throw new ArgumentException("Reader can read .bmp only where number of planes is 1");
+
             short bitsPerPixel = ReadInt16(fileStream);
-            //TODO: Check that compression == 0
+            if (bitsPerPixel != 24)
+                throw new ArgumentException("Reader can read .bmp only with 24 bits per pixel");
+
             int compression = ReadInt32(fileStream);
-            //TODO: Check that imageSizeCompressed == 0
+            if (compression != 0)
+                throw new ArgumentException("Reader can`t read .bmp with image compression");
+
             int imageSizeCompressed = ReadInt32(fileStream);
-            //TODO: Check that XpixelsPerM == 0
+            if (imageSizeCompressed != 0)
+                throw new ArgumentException("Reader can`t read .bmp with image compression");
+
             int XpixelsPerM = ReadInt32(fileStream);
-            //TODO: Check that YpixelsPerM == 0
+            if (XpixelsPerM != 0)
+                throw new ArgumentException("Reader can read .bmp only where XpixelsPerM is 0");
+
             int YpixelsPerM = ReadInt32(fileStream);
-            //TODO: Check that colorUsed == 0
+            if (YpixelsPerM != 0)
+                throw new ArgumentException("Reader can read .bmp only where YpixelsPerM is 0");
+
             int colorUsed = ReadInt32(fileStream);
-            //TODO: Check that importantColors == 0
+            if (colorUsed != 0)
+                throw new ArgumentException("Reader can read .bmp only where colorUsed is 0");
+
             int importantColors = ReadInt32(fileStream);
+            if (importantColors != 0)
+                throw new ArgumentException("Reader can read .bmp only where importantColors is 0");
             return new BmpInfoHeader(height, width, bitsPerPixel);
         }
         private void ReadPixelMatrix(ref Pixel[,] pixelMap, BmpInfoHeader bmpInfoHeader, FileStream fileStream)
@@ -117,24 +132,13 @@ namespace ImageConverter.Bmp
         {
             for (int j = 0; j < bmpInfoHeader.Width; j++)
             {
-                switch (bmpInfoHeader.BitsPerPixel)
-                {
-                    case 24:
-                        {
-                            byte blue = ReadInt8(fileStream);
+                byte blue = ReadInt8(fileStream);
 
-                            byte green = ReadInt8(fileStream);
+                byte green = ReadInt8(fileStream);
 
-                            byte red = ReadInt8(fileStream);
+                byte red = ReadInt8(fileStream);
 
-                            pixelMap[i, j] = new Pixel(red, green, blue);
-                            break;
-                        }
-                    default:
-                        {
-                            throw new ArgumentException("This bit per pixel value is not supported");
-                        }
-                }
+                pixelMap[i, j] = new Pixel(red, green, blue);
             }
         }
         private int ReadInt32(FileStream fileStream)
