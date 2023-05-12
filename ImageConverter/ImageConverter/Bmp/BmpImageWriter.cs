@@ -28,11 +28,10 @@ namespace ImageConverter.Bmp
                 int infoHeaderSize = 40;
                 int fileSize = fileHeaderSize + infoHeaderSize + height * (bytesInRow + rowPaddingSizeInBytes);
                 int dataOffset = fileHeaderSize + infoHeaderSize;
-                BmpFileHeader fileHeader = new BmpFileHeader(signature : "BM", fileSize, dataOffset);
 
-                int width = image.Width;
-                int height = image.Height;
-                BmpInfoHeader infoHeader = new BmpInfoHeader(height, width, bitsPerPixel : 24);
+                BmpFileHeader fileHeader = new BmpFileHeader(fileFormatSignature, fileSize, dataOffset);
+
+                BmpInfoHeader infoHeader = new BmpInfoHeader(height, width, bitsPerPixel);
 
                 WriteFileHeader(fileHeader, fileStream);
 
@@ -95,6 +94,7 @@ namespace ImageConverter.Bmp
 
             int imageSize = height * (bytesInRow + rowPaddingSizeBytes);
             WriteInt32(imageSize, fileStream);
+
             int XpixelsPerM = 0;
             WriteInt32(XpixelsPerM, fileStream);
 
@@ -109,25 +109,25 @@ namespace ImageConverter.Bmp
         }
         private void WriteInt32(int value, FileStream fileStream)
         {
-            byte[] int32Bytes = new byte[4];
-            BinaryPrimitives.WriteInt32LittleEndian(int32Bytes, value);
-            fileStream.Write(int32Bytes);
+            byte[] int32SplitIntoFourBytes = new byte[4];
+            BinaryPrimitives.WriteInt32LittleEndian(int32SplitIntoFourBytes, value);
+            fileStream.Write(int32SplitIntoFourBytes);
         }
         private void WriteInt16(short value, FileStream fileStream)
         {
-            byte[] int16Bytes = new byte[2];
-            BinaryPrimitives.WriteInt16LittleEndian(int16Bytes, value);
-            fileStream.Write(int16Bytes);
+            byte[] int16SplitIntoTwoBytes = new byte[2];
+            BinaryPrimitives.WriteInt16LittleEndian(int16SplitIntoTwoBytes, value);
+            fileStream.Write(int16SplitIntoTwoBytes);
         }
         private void WriteInt8(byte value, FileStream fileStream)
         {
-            byte[] int8Bytes = new byte[1] { value };
-            fileStream.Write(int8Bytes);
+            byte[] int8IntoByteArray = new byte[1] { value };
+            fileStream.Write(int8IntoByteArray);
         }
         private void WriteString(String value, Encoding encoding, FileStream fileStream)
         {
-            byte[] stringBytes = encoding.GetBytes(value);
-            fileStream.Write(stringBytes);
+            byte[] stringSplitIntoBytes = encoding.GetBytes(value);
+            fileStream.Write(stringSplitIntoBytes);
         }
     }
 }
