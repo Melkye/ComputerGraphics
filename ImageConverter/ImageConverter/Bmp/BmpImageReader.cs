@@ -20,6 +20,8 @@ namespace ImageConverter.Bmp
 
                     pixelMap = new Pixel[bmpInfoHeader.Height, bmpInfoHeader.Width];
 
+                    fileStream.Position = fileHeaderInfo.DataOffset;
+
                     if (bmpInfoHeader.Height > 0)
                         ReadPixelMatrix(ref pixelMap, bmpInfoHeader, fileStream);
                     else
@@ -72,13 +74,13 @@ namespace ImageConverter.Bmp
                 throw new ArgumentException("Reader can`t read .bmp with image compression");
 
             int imageSize = ReadInt32(fileStream);
-
+            
             int XpixelsPerM = ReadInt32(fileStream);
-
+            
             int YpixelsPerM = ReadInt32(fileStream);
-
+            
             int colorUsed = ReadInt32(fileStream);
-
+            
             int importantColors = ReadInt32(fileStream);
             
             return new BmpInfoHeader(height, width, bitsPerPixel);
@@ -87,7 +89,6 @@ namespace ImageConverter.Bmp
         {
             int bytesInRow = bmpInfoHeader.Width * bmpInfoHeader.BitsPerPixel / 8;
             int rowPaddingSizeInBytes = bytesInRow % 4 == 0 ? 0 : 4 - bytesInRow % 4;
-            int rowPaddingSizeInBytes = rowPaddingSizeBits / 8;
             for (int i = bmpInfoHeader.Height - 1; i >= 0; i--)
             {
                 ReadPixelRow(ref pixelMap, i, bmpInfoHeader, fileStream);
@@ -98,7 +99,6 @@ namespace ImageConverter.Bmp
         {
             int bytesInRow = bmpInfoHeader.Width * bmpInfoHeader.BitsPerPixel / 8;
             int rowPaddingSizeInBytes = bytesInRow % 4 == 0 ? 0 : 4 - bytesInRow % 4;
-            int rowPaddingSizeInBytes = rowPaddingSizeBits / 8;
             for (int i = 0; i < -bmpInfoHeader.Height; i++)
             {
                 ReadPixelRow(ref pixelMap, i, bmpInfoHeader, fileStream);
