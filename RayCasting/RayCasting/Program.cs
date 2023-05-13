@@ -18,7 +18,7 @@ float fov = 60;
 int vRes = 100;
 int hRes = 100;
 
-Camera cam1 = new(coordOrigin, negativeZedDirection, fov);
+Camera cam1 = new(coordOrigin, negativeZedDirection, new(0, 1, 0), fov);
 
 Sphere sphere1 = new(new(0, 0, -7), 1f);
 Sphere sphere2 = new(new(0.8f, 1, -5), 0.5f);
