@@ -65,7 +65,7 @@ public readonly struct Vector3D
     public Vector3D Cross(Vector3D that)
     {
         float x = (Y * that.Z) - (Z * that.Y);
-        float y = (X * that.X) - (X * that.Z);
+        float y = (Z * that.X) - (X * that.Z);
         float z = (X * that.Y) - (Y * that.X);
 
         Vector3D product = new(x, y, z);
@@ -121,5 +121,10 @@ public readonly struct Vector3D
             vector.Z * scalar);
 
         return resultVector;
+    }
+
+    public static Vector3D operator *(float scalar, Vector3D vector)
+    {
+        return vector * scalar;
     }
 }
