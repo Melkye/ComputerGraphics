@@ -1,4 +1,5 @@
 using ImageConverter;
+using ImageConverter.Bmp;
 using ImageConverter.Ppm;
 
 namespace ImageConverter.Tests;
@@ -62,6 +63,38 @@ public class ImageWriteReadTests
             for (int j = 0; j < output.Width; j++)
             {
                 Assert.That(output[i, j], Is.EqualTo(image[i,j]));
+            }
+        }
+    }
+
+    [Test, Category("Bmp")]
+    public void Image_WriteToBmpReadFromBmp_SameImage()
+    {
+        Pixel[,] pixels = new Pixel[2, 3];
+        pixels[0, 0] = new Pixel(255, 0, 0);
+        pixels[0, 1] = new Pixel(0, 255, 0);
+        pixels[0, 2] = new Pixel(0, 0, 255);
+        pixels[1, 0] = new Pixel(255, 0, 0);
+        pixels[1, 1] = new Pixel(0, 255, 0);
+        pixels[1, 2] = new Pixel(0, 0, 255);
+
+        var image = new Image(pixels);
+
+        var path = Path.Combine(TestContext.CurrentContext.TestDirectory, "Resources\\testBmp.bmp");
+
+        IImageWriter writer = new BmpImageWriter();
+        IImageReader reader = new BmpImageReader();
+
+        writer.Write(image, path);
+        Image output = reader.Read(path);
+
+        Assert.That(output.Width == image.Width && output.Height == image.Height);
+        //TODO: Maybe exists another way to assert equality of two two-dimensional arrays
+        for (int i = 0; i < output.Height; i++)
+        {
+            for (int j = 0; j < output.Width; j++)
+            {
+                Assert.That(output[i, j], Is.EqualTo(image[i, j]));
             }
         }
     }
