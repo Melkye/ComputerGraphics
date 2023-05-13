@@ -7,5 +7,9 @@ public interface ICamera
 
     Vector3D Direction { get; }
 
+    Vector3D UpDirection { get; }
+
+    Vector3D RightDirection { get; }
+
     float FieldOfView { get; }
 }
