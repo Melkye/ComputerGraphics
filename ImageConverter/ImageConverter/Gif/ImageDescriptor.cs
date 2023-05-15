@@ -4,16 +4,21 @@ namespace ImageConverter.Gif;
 
 public readonly struct ImageDescriptor
 {
-    public readonly short LeftPos { get; } // NOTE: maybe need ushort
+    public readonly short LeftPos { get; }
+
     public readonly short TopPos { get; }
 
     public readonly short Width { get; }
+
     public readonly short Height { get; }
 
     public readonly bool HasLocalColorTable { get; }
+
     public readonly bool IsInterlaced { get; }
+
     public readonly bool IsSorted { get; }
-    public readonly byte[,] LocalColorTable { get; }
+
+    public readonly Pixel[] LocalColorTable { get; }
 
     public ImageDescriptor(
         short leftPos,
@@ -22,7 +27,7 @@ public readonly struct ImageDescriptor
         short height,
         bool isInterlaced,
         bool isSorted,
-        byte[,] localColorTable)
+        Pixel[] localColorTable)
     {
         LeftPos = leftPos;
         TopPos = topPos;
@@ -37,12 +42,12 @@ public readonly struct ImageDescriptor
     }
 
     public ImageDescriptor(
-    short leftPos,
-    short topPos,
-    short width,
-    short height,
-    bool isInterlaced,
-    bool isSorted)
+        short leftPos,
+        short topPos,
+        short width,
+        short height,
+        bool isInterlaced,
+        bool isSorted)
     {
         LeftPos = leftPos;
         TopPos = topPos;
@@ -55,17 +60,4 @@ public readonly struct ImageDescriptor
         IsSorted = isSorted;
         LocalColorTable = null;
     }
-
-    // image descriptor
-    //byte separator = ReadInt8(fileStream); // always 0x2C
-
-
-    // if local color table is present then read it
-
-    //TODO: write parser of sub blocks // extension blocks
-    //byte extensionIntroducer = ReadInt8(fs);
-    // 0x21 for graphics extension block
-    // 0x21 for plain txt extension block
-    // 0x21 for application extension block
-    // 0x21 for comment extension block
 }

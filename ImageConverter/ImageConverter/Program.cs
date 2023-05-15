@@ -10,7 +10,7 @@ internal class Program
 
         var image = reader.Read(gifImageSource);
 
-        string bmpImageDestination = "";
+        string bmpImageDestination = "C:\\Repos\\ComputerGraphics\\ImageConverter\\ImageConverter\\Images\\GIF_TO_BMP.bmp";
         BmpImageWriter writer = new BmpImageWriter();
 
         writer.Write(image, bmpImageDestination);
