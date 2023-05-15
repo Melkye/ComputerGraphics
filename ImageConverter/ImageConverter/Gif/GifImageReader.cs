@@ -1,5 +1,6 @@
 using System.Buffers.Binary;
 using System.Drawing;
+using System.IO;
 using System.Text;
 
 namespace ImageConverter.Gif;
@@ -27,6 +28,8 @@ public class GifImageReader : IImageReader
         byte sortedFlag = (byte)(packed & 0b00001000); // isn't important
         byte actualSizeOfGlobalColorTable = (byte)((packed & 0b00000111) + 1);
 
+        int numOfColors = (1 << actualSizeOfGlobalColorTable);
+
         byte bgColorIndex = ReadInt8(fs);
         byte aspectRatio = ReadInt8(fs); // informational
 
@@ -34,9 +37,9 @@ public class GifImageReader : IImageReader
         //{
 
         //byte[,] globalColorTable = new byte[rgbColorsCount, actualSizeOfGlobalColorTable];
-        Pixel[] globalColorTable = new Pixel[actualSizeOfGlobalColorTable];
+        Pixel[] globalColorTable = new Pixel[numOfColors];
 
-        for (byte i = 0; i < actualSizeOfGlobalColorTable; i++)
+        for (int i = 0; i < numOfColors; i++)
         {
             byte red = (byte)fs.ReadByte();
             byte green = (byte)fs.ReadByte();
@@ -48,13 +51,20 @@ public class GifImageReader : IImageReader
         
         byte trailer = 0x3B;
 
+        SkipExtension(fs);
+
+        byte separator = ReadInt8(fs); // always 0x2C
         (byte[] compressedBitMap, ImageDescriptor descriptor) = ReadImage(fs);
 
 
         int uncompressedDataLength = descriptor.Width * descriptor.Height;
 
-        Lzw.CompressedSize = compressedBitMap.Length;
-        byte[] uncompressedData = Lzw.LzwDecompress(compressedBitMap);
+        //byte[] uncompressedData = new byte[uncompressedDataLength];
+
+
+        // TODO: uncompress data
+
+        byte[] uncompressedData = new byte[uncompressedDataLength];
 
         // TODO: parse byte array to image
         Pixel[,] pixelMap = new Pixel[descriptor.Height, descriptor.Width];
@@ -62,8 +72,10 @@ public class GifImageReader : IImageReader
         // NOTE: this works if all images are consecutive
         for(int i = 0; i < uncompressedData.Length; i++)
         {
-            int row = i % descriptor.Width;
-            int column = i - row * descriptor.Width;
+            int row = i / descriptor.Width;
+            int column = i % descriptor.Width;
+            //int row = i % descriptor.Width;
+            //int column = i - row * descriptor.Width;
             pixelMap[row, column] = globalColorTable[uncompressedData[i]];
         }
 
@@ -81,24 +93,36 @@ public class GifImageReader : IImageReader
     //}
     private (byte[] compressedBitMap, ImageDescriptor descriptor) ReadImage(FileStream fileStream)
     {
-        byte separator = ReadInt8(fileStream); // always 0x2C
         ImageDescriptor descriptor = ReadImageDescriptor(fileStream);
 
         ////TODO: write parser of sub blocks // extension blocks
+        byte lzwMinimumCodeSize = ReadInt8(fileStream);
 
-        int compressedDataLength = ReadInt8(fileStream);
-        byte[] compressedBitMap = new byte[compressedDataLength];
+        //int compressedDataLength = ReadInt8(fileStream);
+        byte maxBlockSize = 255;
+        byte[] compressedBitMap = new byte[maxBlockSize];
 
-        byte lzwCodeSize = ReadInt8(fileStream);
+        //byte lzwCodeSize = ReadInt8(fileStream);
 
-        int blockPos = 0;
+        int blockStart = 0;
         byte blockSize = ReadInt8(fileStream);
 
         while (blockSize != 0)
         {
-            fileStream.Read(compressedBitMap.AsSpan()[blockPos..blockSize]); // TODO check if it works UPD: it doesn't because bitmap size is smaller than block size
+            int blockEnd = blockStart + blockSize;
 
-            blockPos += blockSize;
+            if (blockEnd > compressedBitMap.Length)
+            {
+                byte[] largerCompressedBitMap = new byte[blockEnd];
+                
+                compressedBitMap.CopyTo(largerCompressedBitMap, 0);
+
+                compressedBitMap = largerCompressedBitMap;
+            }
+
+            fileStream.Read(compressedBitMap.AsSpan()[blockStart..blockEnd]); // TODO check if it works UPD: it doesn't because bitmap size is smaller than block size
+
+            blockStart += blockSize;
             blockSize = ReadInt8(fileStream);
         }
         return (compressedBitMap, descriptor);
@@ -110,7 +134,26 @@ public class GifImageReader : IImageReader
     //    fileStream.Read(compressedData);
     //    return compressedData;
     //}
+    private void SkipExtension(FileStream fileStream)
+    {
+        //byte element = ReadInt8(fileStream); // change to fs.ReadByte();
+        //while (element == extensionIntroducer)
+        //{
+        byte extensionIntroducer = (byte)fileStream.ReadByte(); // always 0x21;
+        byte label = (byte)fileStream.ReadByte(); // need to differ extensions
 
+        byte remainingBlockSize = (byte)fileStream.ReadByte();
+
+        fileStream.Position += remainingBlockSize; // NOTE: works only for graphics comtrol extension block
+
+        byte terminator = 0;
+        byte element = ReadInt8(fileStream);
+
+        if (element == terminator)
+            return;
+        else // TODO: add other extensiond processing or ignoring
+            return;
+    }
     private ImageDescriptor ReadImageDescriptor(FileStream fileStream)
     {
         short leftPos = ReadInt16(fileStream);
