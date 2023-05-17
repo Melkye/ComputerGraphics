@@ -1,17 +1,46 @@
 ﻿using ImageConverter;
 using ImageConverter.Bmp;
 using ImageConverter.Ppm;
+using static System.Net.Mime.MediaTypeNames;
 
 internal class Program
 {
     private static void Main(string[] args) // --source --goal-format --output
     {
-        //Console.WriteLine("Hello, World!");
+        string source = "";
+        string destination = "";
+        string goal_format = "";
+
+        string readLine = Console.ReadLine();
+        string[] parameters = readLine.Split(' ', '=');
+        for (int i = 0; i < parameters.Length; i++)
+        {
+            Console.WriteLine(parameters[i]);
+        }
+
+        for (int i = 0; i < parameters.Length; i++)
+        {
+            if (parameters[i] == "--output")
+            {
+                destination = parameters[i + 1];
+            }
+            if (parameters[i] == "--source")
+            {
+                source = parameters[i + 1];
+            }
+            if (parameters[i] == "--goal-format")
+            {
+                goal_format = parameters[i + 1];
+            }
+        }
+
+        //C:\Users\arikt\Documents\Programming\ComputerGraphics\ImageConverter\Images\MARBLES.ppm
+        //C:\Users\arikt\Documents\Programming\ComputerGraphics\ImageConverter\Images\output1.bmp
+
+        //source = "C:\\Users\\arikt\\Documents\\Programming\\ComputerGraphics\\ImageConverter\\Images\\MARBLES.ppm";
+        //destination = "C:\\Users\\arikt\\Documents\\Programming\\ComputerGraphics\\ImageConverter\\Images\\output1.bmp";
 
         ImageConverter.ImageConverter ic = new(new PpmImageReader(), new BmpImageWriter());
-
-        string source = "C:\\Repos\\ComputerGraphics\\ImageConverter\\Images\\MARBLES.ppm";
-        string destination = "C:\\Repos\\ComputerGraphics\\ImageConverter\\Images\\output.bmp";
 
         ic.Convert(source, "", destination);
     }
