@@ -38,7 +38,8 @@ public class GifImageReader : IImageReader
 
         (byte[] compressedBitMap, ImageDescriptor descriptor) = ReadImage(fs);
 
-        LzwCompresser compresser = new();
+        // TODO: write own compresser
+        StolenLzwCompresser compresser = new();
         byte[] uncompressedData  = compresser.Decompress(compressedBitMap, sizeOfGlobalColorTableLog2);
 
 
@@ -54,7 +55,7 @@ public class GifImageReader : IImageReader
 
         for (int i = 0; i < colorReferences.Length; i++)
         {
-            int row = i / height;
+            int row = i / width;
             int column = i % width;
 
             byte colorReference = colorReferences[i];
