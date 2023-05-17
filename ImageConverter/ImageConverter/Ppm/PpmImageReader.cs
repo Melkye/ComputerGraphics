@@ -64,7 +64,7 @@ public class PpmImageReader : IImageReader
     private void SkipToEndOfLine(StreamReader stream)
     {
         char currentChar = (char)stream.Read();
-        while (currentChar != '\n' || !stream.EndOfStream)
+        while (currentChar != '\n' && !stream.EndOfStream)
             currentChar = (char)stream.Read();
     }
 }
