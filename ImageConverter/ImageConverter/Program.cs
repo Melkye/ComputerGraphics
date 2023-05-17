@@ -1,36 +1,40 @@
 ﻿using ImageConverter;
 using ImageConverter.Bmp;
 using ImageConverter.Ppm;
-using static System.Net.Mime.MediaTypeNames;
 
 internal class Program
 {
-    private static void Main(string[] args) // --source --goal-format --output
+    private static void Main(string[] args) // --source smth --goal-format smth --output smth
     {
         string source = "";
         string destination = "";
         string goal_format = "";
 
-        string readLine = Console.ReadLine();
-        string[] parameters = readLine.Split(' ', '=');
-        for (int i = 0; i < parameters.Length; i++)
-        {
-            Console.WriteLine(parameters[i]);
-        }
+        string basePath = System.IO.Directory.GetCurrentDirectory();
+        //string readLine = Console.ReadLine();
+        //string[] parameters = readLine.Split(' ', '=');
+        //for (int i = 0; i < args.Length; i++)
+        //{
+        //    Console.WriteLine(args[i]);
+        //}
 
-        for (int i = 0; i < parameters.Length; i++)
+        // TODO: check is user doesn't specify argument
+        for (int i = 0; i < args.Length - 1; i++)
         {
-            if (parameters[i] == "--output")
+            if (args[i] == "--output")
             {
-                destination = parameters[i + 1];
+                destination = args[i + 1];
+                i++;
             }
-            if (parameters[i] == "--source")
+            if (args[i] == "--source")
             {
-                source = parameters[i + 1];
+                source = args[i + 1];
+                i++;
             }
-            if (parameters[i] == "--goal-format")
+            if (args[i] == "--goal-format")
             {
-                goal_format = parameters[i + 1];
+                goal_format = args[i + 1];
+                i++;
             }
         }
 
@@ -40,8 +44,11 @@ internal class Program
         //source = "C:\\Users\\arikt\\Documents\\Programming\\ComputerGraphics\\ImageConverter\\Images\\MARBLES.ppm";
         //destination = "C:\\Users\\arikt\\Documents\\Programming\\ComputerGraphics\\ImageConverter\\Images\\output1.bmp";
 
+        // TODO: create converter based on passed args
+        // NOTE: consider using converter factory
+
         ImageConverter.ImageConverter ic = new(new PpmImageReader(), new BmpImageWriter());
 
-        ic.Convert(source, "", destination);
+        ic.Convert(source, goal_format, destination);
     }
 }
