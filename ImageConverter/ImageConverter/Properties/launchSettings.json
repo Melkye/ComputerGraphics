@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "ImageConverter": {
+      "commandName": "Project",
+      "commandLineArgs": "--destination C:\\Users\\arikt\\Documents\\Programming\\ComputerGraphics\\ImageConverter\\Images\\output23.ppm --source C:\\Users\\arikt\\Documents\\Programming\\ComputerGraphics\\ImageConverter\\Images\\MARBLES.bmp --goal-format .ppm"
+    }
+  }
+}
+//"--destination C:\\Users\\arikt\\Documents\\Programming\\ComputerGraphics\\ImageConverter\\Images\\output23.bmp --source C:\\Users\\arikt\\Documents\\Programming\\ComputerGraphics\\ImageConverter\\Images\\MARBLES.ppm --goal-format ostnijgn"
