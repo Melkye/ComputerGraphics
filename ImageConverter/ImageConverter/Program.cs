@@ -1,5 +1,6 @@
 ﻿using ImageConverter.Bmp;
 using ImageConverter.Gif;
+using ImageConverter;
 
 internal class Program
 {
