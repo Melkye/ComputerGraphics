@@ -1,5 +1,6 @@
 ﻿using ImageConverter.Bmp;
 using ImageConverter.Ppm;
+using ImageConverter.Gif;
 
 namespace ImageConverter
 {
@@ -63,9 +64,14 @@ namespace ImageConverter
             {
                 throw new Exception("source is not exists");
             }
+            if (Path.GetExtension(source) != ".bmp" && Path.GetExtension(source) != ".ppm"
+                && Path.GetExtension(source) != ".gif")
+            {
+                throw new Exception("file extension of source must be gif, bmp or ppm.");
+            }
             if (Path.GetExtension(destination) != ".bmp" && Path.GetExtension(destination) != ".ppm")
             {
-                throw new Exception("file extension of destination must be gif, bmp or ppm.");
+                throw new Exception("file extension of destination must be bmp or ppm.");
             }
             if (goal_format != ".bmp" && goal_format != ".ppm")
             {
@@ -91,13 +97,21 @@ namespace ImageConverter
         {
             ImageConverter ic;
 
-            if (goal_format == ".bmp")
+            if (Path.GetExtension(source) == ".ppm")
             {
                 ic = new(new PpmImageReader(), new BmpImageWriter());
             }
-            else
+            else if (Path.GetExtension(source) == ".bmp")
             {
                 ic = new(new BmpImageReader(), new PpmImageWriter());
+            }
+            else if (Path.GetExtension(source) == ".gif" && goal_format == ".ppm")
+            {
+                ic = new(new GifImageReader(), new PpmImageWriter());
+            }
+            else
+            {
+                ic = new(new GifImageReader(), new BmpImageWriter());
             }
 
             ic.Convert(source, goal_format, destination);
