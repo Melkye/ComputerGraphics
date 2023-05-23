@@ -5,12 +5,15 @@ namespace ImageConverter
 {
     internal class Input
     {
-        public Input()
+        public Input(string[] args) 
         {
+            string[] parameters = new string[3];
 
+            parameters = InputCheck(args);
+            ChoiseConverter(parameters[0], parameters[1], parameters[2]);
         }
 
-        public void InputCheck(string[] args)
+        private string[] InputCheck(string[] args)
         {
             string source = "";
             string destination = "";
@@ -18,10 +21,11 @@ namespace ImageConverter
             bool isDestinationParametеrExist = false;
             bool isSourceParameterExist = false;
             bool isGoalFormatParameterExist = false;
+            string[] parameters = new string[3];
 
-            if (args.Length > 6)
+            if (args.Length != 6)
             {
-                throw new Exception("Too many parameters");
+                throw new Exception("Wrong number of parameters (6 needed)");
             }
 
             for (int i = 0; i < args.Length; i++)
@@ -45,15 +49,15 @@ namespace ImageConverter
 
             if (!isDestinationParametеrExist)
             {
-                throw new Exception("you forget --destination");
+                throw new ArgumentException("you forgot --destination");
             }
             if (!isSourceParameterExist)
             {
-                throw new Exception("you forget --source");
+                throw new ArgumentException("you forgot --source");
             }
             if (!isGoalFormatParameterExist)
             {
-                throw new Exception("you forget --goal-format");
+                throw new ArgumentException("you forgot --goal-format");
             }
             if (!File.Exists(source))
             {
@@ -61,7 +65,7 @@ namespace ImageConverter
             }
             if (Path.GetExtension(destination) != ".bmp" && Path.GetExtension(destination) != ".ppm")
             {
-                throw new Exception("destination is wrong");
+                throw new Exception("file extension of destination must be gif, bmp or ppm.");
             }
             if (goal_format != ".bmp" && goal_format != ".ppm")
             {
@@ -75,18 +79,15 @@ namespace ImageConverter
             {
                 throw new Exception("destination file extension must be the same as goal-format");
             }
-            if (string.IsNullOrEmpty(destination) || string.IsNullOrEmpty(source) || string.IsNullOrEmpty(goal_format))
-            {
-                throw new Exception("destination, source and goal-format must not be null or empty");
-            }
 
-            Console.WriteLine(destination + " " + source + " " + goal_format);
+            parameters[0] = destination;
+            parameters[1] = source;
+            parameters[2] = goal_format;
 
-            Choise(destination, source, goal_format);
-
+            return parameters;
         }
 
-        private void Choise(string destination, string source, string goal_format)
+        private void ChoiseConverter(string destination, string source, string goal_format)
         {
             ImageConverter ic;
 
