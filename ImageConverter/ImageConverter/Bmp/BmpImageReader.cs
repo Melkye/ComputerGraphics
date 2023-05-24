@@ -7,6 +7,8 @@ namespace ImageConverter.Bmp
 {
     public class BmpImageReader : IImageReader
     {
+        // TODO: create normal name
+        private const string fileFormatNumber = "BM";
         public Image Read(string source)
         {
             Pixel[,] pixelMap;

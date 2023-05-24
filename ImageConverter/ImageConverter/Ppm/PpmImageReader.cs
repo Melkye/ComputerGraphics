@@ -45,6 +45,24 @@ public class PpmImageReader : IImageReader
         return new Image(pixelmap);
     }
 
+    public bool CanRead(string source)
+    {
+        using (var fileStream = new FileStream(source, FileMode.Open, FileAccess.Read))
+        {
+            string starting14bytesString = ReadString(fileFormatNumber.Length, Encoding.ASCII, fileStream);
+
+            return starting14bytesString.StartsWith(fileFormatNumber);
+        }
+    }
+
+    private string ReadString(int size, Encoding encoding, FileStream fileStream)
+    {
+        byte[] stringSplitIntoSizeBytes = new byte[size];
+        fileStream.Read(stringSplitIntoSizeBytes);
+        string result = encoding.GetString(stringSplitIntoSizeBytes);
+        return result;
+    }
+
     private string ReadUntilDelimiter(StreamReader stream)
     {
         StringBuilder result = new();
