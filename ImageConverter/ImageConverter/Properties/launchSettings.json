@@ -2,7 +2,7 @@
   "profiles": {
     "ImageConverter": {
       "commandName": "Project",
-      "commandLineArgs": "--destination C:\\Users\\arikt\\Documents\\Programming\\ComputerGraphics\\ImageConverter\\Images\\outputFromPpm.bmp --source C:\\Users\\arikt\\Documents\\Programming\\ComputerGraphics\\ImageConverter\\Images\\outputFromGif.ppm --goal-format .bmp"
+      "commandLineArgs": "--destination=C:\\Repos\\ComputerGraphics\\ImageConverter\\Images\\ --source=C:\\Repos\\ComputerGraphics\\ImageConverter\\Images\\Source\\TP21_Joconde_Original.ppm --goal-format=bmp"
     }
   }
 }
