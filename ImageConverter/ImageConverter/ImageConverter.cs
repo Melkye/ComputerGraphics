@@ -1,4 +1,8 @@
-﻿namespace ImageConverter;
+﻿using ImageConverter.Bmp;
+using ImageConverter.Gif;
+using ImageConverter.Ppm;
+
+namespace ImageConverter;
 
 public class ImageConverter
 {
@@ -6,17 +10,30 @@ public class ImageConverter
 
     private IImageWriter _writer;
 
-    public ImageConverter(IImageReader reader, IImageWriter writer)
-    {
-        _reader = reader;
-        _writer = writer;
-    }
-
-
     public void Convert(string source, string goalFormat, string destination)
     {
-        var image = _reader.Read(source);
+        string sourceFormat = source[^3..];
+
+        SetReaderWriter(sourceFormat, goalFormat);
+
+        Image image = _reader.Read(source);
 
         _writer.Write(image, destination);
+    }
+
+    private void SetReaderWriter(string sourceFormat, string goalFormat)
+    {
+        _reader = sourceFormat switch
+        {
+            "ppm" => new PpmImageReader(),
+            "bmp" => new BmpImageReader(),
+            "gif" => new GifImageReader(),
+        };
+
+        _writer = goalFormat switch
+        {
+            "ppm" => new PpmImageWriter(),
+            "bmp" => new BmpImageWriter(),
+        };
     }
 }

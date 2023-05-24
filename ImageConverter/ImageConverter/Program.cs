@@ -1,18 +1,33 @@
-﻿using ImageConverter;
-using ImageConverter.Bmp;
-using ImageConverter.Ppm;
+using ImageConverter;
 
 internal class Program
 {
-    private static void Main(string[] args) // --source --goal-format --output
+    private static void Main(string[] args)
     {
-        //Console.WriteLine("Hello, World!");
+        (string source, string goalFormat, string destination) = ("", "", "");
+        try
+        {
+            (source, goalFormat, destination) = new CommandLineArgsParser().ParseArgs(args);
+        }
+        catch (ArgumentException e)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(e.Message);
+            Console.ForegroundColor = ConsoleColor.White;
+        }
 
-        ImageConverter.ImageConverter ic = new(new PpmImageReader(), new BmpImageWriter());
+        try
+        {
+            ImageConverter.ImageConverter ic = new();
 
-        string source = "C:\\Repos\\ComputerGraphics\\ImageConverter\\Images\\MARBLES.ppm";
-        string destination = "C:\\Repos\\ComputerGraphics\\ImageConverter\\Images\\output.bmp";
+            ic.Convert(source, goalFormat, destination);
+        }
+        catch (Exception e)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(e.Message);
+            Console.ForegroundColor = ConsoleColor.White;
 
-        ic.Convert(source, "", destination);
+        }
     }
 }
