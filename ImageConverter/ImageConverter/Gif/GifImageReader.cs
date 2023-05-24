@@ -36,11 +36,11 @@ public class GifImageReader : IImageReader
 
         byte separator = ReadInt8(fs); // always 0x2C
 
-        (byte[] compressedBitMap, ImageDescriptor descriptor) = ReadImage(fs);
+        (byte[] compressedBitMap, ImageDescriptor descriptor, byte lzwMinimumCodeSize) = ReadImage(fs);
 
         // TODO: write own compresser
-        StolenLzwCompresser compresser = new();
-        byte[] uncompressedData  = compresser.Decompress(compressedBitMap, sizeOfGlobalColorTableLog2);
+        OwnLzwCompresser compresser = new();
+        byte[]? uncompressedData = compresser.Decompress(compressedBitMap, lzwMinimumCodeSize);
 
 
         Pixel[,] pixelMap = CreateImageFromColorReferences(uncompressedData, globalColorTable, descriptor.Height, descriptor.Width);
@@ -48,7 +48,7 @@ public class GifImageReader : IImageReader
 
         return image;
     }
-    
+
     private Pixel[,] CreateImageFromColorReferences(byte[] colorReferences, Pixel[] colorTable, int height, int width)
     {
         Pixel[,] pixelMap = new Pixel[height, width];
@@ -81,17 +81,16 @@ public class GifImageReader : IImageReader
         return colorTable;
     }
 
-    private (byte[] compressedBitMap, ImageDescriptor descriptor) ReadImage(FileStream fileStream)
+    private (byte[] compressedBitMap, ImageDescriptor descriptor, byte lzwMinimumCodeSize) ReadImage(FileStream fileStream)
     {
         ImageDescriptor descriptor = ReadImageDescriptor(fileStream);
 
         byte lzwMinimumCodeSize = ReadInt8(fileStream);
 
-        byte maxBlockSize = 255;
-        byte[] compressedBitMap = new byte[maxBlockSize];
-
         int blockStart = 0;
         byte blockSize = ReadInt8(fileStream);
+
+        byte[] compressedBitMap = new byte[blockSize];
 
         while (blockSize != 0)
         {
@@ -100,7 +99,7 @@ public class GifImageReader : IImageReader
             if (blockEnd > compressedBitMap.Length)
             {
                 byte[] largerCompressedBitMap = new byte[blockEnd];
-                
+
                 compressedBitMap.CopyTo(largerCompressedBitMap, 0);
 
                 compressedBitMap = largerCompressedBitMap;
@@ -111,7 +110,7 @@ public class GifImageReader : IImageReader
             blockStart += blockSize;
             blockSize = ReadInt8(fileStream);
         }
-        return (compressedBitMap, descriptor);
+        return (compressedBitMap, descriptor, lzwMinimumCodeSize);
     }
 
     private void SkipExtensions(FileStream fileStream)
