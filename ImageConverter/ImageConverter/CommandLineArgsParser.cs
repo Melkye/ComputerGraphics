@@ -13,6 +13,10 @@ internal class CommandLineArgsParser
     /// <exception cref="ArgumentException"> thrown if error occurs when parsing</exception>
     public (string source, string goalFormat, string destination) ParseArgs(string[] args)
     {
+        // TODO: rewrite this class to not know about fact types
+
+
+        // TODO: change to throw exception from converter
         List<string> supportedReadFormats = new() { "ppm", "bmp", "gif" };
         List<string> supportedWriteFormats = new() { "ppm", "bmp" };
 

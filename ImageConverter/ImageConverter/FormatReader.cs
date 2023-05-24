@@ -2,6 +2,7 @@ using System.Text;
 
 namespace ImageConverter;
 
+// TODO remove this and embed in readers/writers
 public class FormatReader
 {
     public string GetFileFormat(string filename)
