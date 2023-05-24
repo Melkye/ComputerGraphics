@@ -33,7 +33,11 @@ public class PpmImageReader : IImageReader
                     }
                 }
             }
-            catch (Exception ex) when (ex is not ArgumentException)
+            catch (ArgumentException ex)
+            {
+                throw;
+            }
+            catch (Exception ex)
             {
                 throw new ArgumentException("File is corrupted");
             }
