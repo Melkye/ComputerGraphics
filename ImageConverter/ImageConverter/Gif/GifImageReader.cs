@@ -5,6 +5,7 @@ namespace ImageConverter.Gif;
 
 public class GifImageReader : IImageReader
 {
+    private const string fileMagicNumber = "GIF8";
     public Image Read(string source)
     {
         using FileStream fs = new(source, FileMode.Open, FileAccess.Read);
@@ -43,6 +44,16 @@ public class GifImageReader : IImageReader
         Image image = new(pixelMap);
 
         return image;
+    }
+
+    public bool CanRead(string source)
+    {
+        using (var fileStream = new FileStream(source, FileMode.Open, FileAccess.Read))
+        {
+            string starting14bytesString = ReadString(fileMagicNumber.Length, Encoding.ASCII, fileStream);
+
+            return starting14bytesString.StartsWith(fileMagicNumber);
+        }
     }
 
     private Pixel[,] CreateImageFromColorReferences(byte[] colorReferences, Pixel[] colorTable, int height, int width)

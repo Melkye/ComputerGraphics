@@ -9,6 +9,7 @@ namespace ImageConverter.Bmp
     public class BmpImageWriter : IImageWriter
     {
         private const string fileFormatSignature = "BM";
+        private const string fileFormat = "bmp";
         public void Write(Image image, string destination)
         {
             if(!File.Exists(destination)) 
@@ -57,6 +58,16 @@ namespace ImageConverter.Bmp
                 }
             }
         }
+
+        public bool CanWrite(string format)
+        {
+            if (format == fileFormat)
+            {
+                return true;
+            }
+            return false;
+        }
+
         private void WriteFileHeader(BmpFileHeader fileHeader, FileStream fileStream)
         {
             string signature = fileHeader.Signature;

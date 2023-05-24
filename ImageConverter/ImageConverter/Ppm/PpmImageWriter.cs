@@ -1,8 +1,11 @@
-﻿namespace ImageConverter.Ppm;
+﻿using System.Text;
+
+namespace ImageConverter.Ppm;
 
 public class PpmImageWriter : IImageWriter
 {
     private const string fileFormatNumber = "P3";
+    private const string fileFormat = "ppm";
     public void Write(Image image, string destination)
     {
         using (StreamWriter streamWriter = new StreamWriter(destination))
@@ -22,5 +25,14 @@ public class PpmImageWriter : IImageWriter
                 streamWriter.Write("\n");
             }
         }
+    }
+
+    public bool CanWrite(string format)
+    {
+        if (format == fileFormat)
+        {
+            return true;
+        }
+        return false;
     }
 }

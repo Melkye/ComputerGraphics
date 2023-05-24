@@ -124,6 +124,4 @@ internal class CommandLineArgsParser
 
         return (source, goalFormat, destination);
     }
-
-
 }

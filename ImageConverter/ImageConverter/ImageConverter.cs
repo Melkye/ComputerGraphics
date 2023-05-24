@@ -31,7 +31,6 @@ public class ImageConverter
             new GifImageReader(),
         };
 
-
         foreach(var reader in readers)
         {
             if (reader.CanRead(source))
@@ -54,7 +53,6 @@ public class ImageConverter
             new PpmImageWriter(),
             new BmpImageWriter(),
         };
-
 
         foreach (var writer in writers)
         {

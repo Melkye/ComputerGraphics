@@ -7,8 +7,7 @@ namespace ImageConverter.Bmp
 {
     public class BmpImageReader : IImageReader
     {
-        // TODO: create normal name
-        private const string fileFormatNumber = "BM";
+        private const string fileMagicNumber = "BM";
         public Image Read(string source)
         {
             Pixel[,] pixelMap;
@@ -40,6 +39,17 @@ namespace ImageConverter.Bmp
             }
             return new Image(pixelMap);
         }
+
+        public bool CanRead(string source)
+        {
+            using (var fileStream = new FileStream(source, FileMode.Open, FileAccess.Read))
+            {
+                string starting14bytesString = ReadString(fileMagicNumber.Length, Encoding.ASCII, fileStream);
+
+                return starting14bytesString.StartsWith(fileMagicNumber);
+            }
+        }
+
         private BmpFileHeader ReadFileHeader(FileStream fileStream)
         {
             string signature = ReadString(2, Encoding.ASCII, fileStream);
