@@ -1,9 +1,8 @@
-// using System.Text;
 using System.Collections;
 
 namespace ImageConverter.Gif;
 
-public class OwnLzwCompresser
+public class LzwCompressor
 {
     public byte[] Decompress(byte[] compressedData, int lzwMinCodeSize)
     {

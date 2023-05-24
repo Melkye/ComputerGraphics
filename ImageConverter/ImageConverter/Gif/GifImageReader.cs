@@ -27,11 +27,7 @@ public class GifImageReader : IImageReader
         byte bgColorIndex = ReadInt8(fs);
         byte aspectRatio = ReadInt8(fs); // informational
 
-        // TODO: add branches if global table exists / not exists -> use local table if global not exists
-
         Pixel[] globalColorTable = ReadColorTable(fs, numOfColors);
-
-        // TODO: consider adding extension parser
         SkipExtensions(fs);
 
         byte separator = ReadInt8(fs); // always 0x2C
@@ -39,8 +35,8 @@ public class GifImageReader : IImageReader
         (byte[] compressedBitMap, ImageDescriptor descriptor, byte lzwMinimumCodeSize) = ReadImage(fs);
 
         // TODO: write own compresser
-        OwnLzwCompresser compresser = new();
-        byte[]? uncompressedData = compresser.Decompress(compressedBitMap, lzwMinimumCodeSize);
+        LzwCompressor compressor = new();
+        byte[]? uncompressedData = compressor.Decompress(compressedBitMap, lzwMinimumCodeSize);
 
 
         Pixel[,] pixelMap = CreateImageFromColorReferences(uncompressedData, globalColorTable, descriptor.Height, descriptor.Width);

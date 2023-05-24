@@ -52,7 +52,7 @@ internal class CommandLineArgsParser
         string destinationFileName = Path.GetFileNameWithoutExtension(source) + 
             "_FROM_" + Path.GetExtension(source)[1..].ToUpper() + "." + goalFormat;
 
-        destination += destinationFileName;
+        destination += "\\" + destinationFileName;
 
 
         if (!sourceParameterExists)
