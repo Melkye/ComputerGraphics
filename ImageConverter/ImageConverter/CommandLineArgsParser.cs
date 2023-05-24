@@ -1,6 +1,9 @@
-﻿using System.Text;
+﻿using System.IO;
+using System.Text;
 
 namespace ImageConverter;
+
+// TODO change source extension retrieval
 
 internal class CommandLineArgsParser
 {
@@ -10,8 +13,8 @@ internal class CommandLineArgsParser
     /// <exception cref="ArgumentException"> thrown if error occurs when parsing</exception>
     public (string source, string goalFormat, string destination) ParseArgs(string[] args)
     {
-        List<string> supportedReadFormats = new() { ".ppm", ".bmp", ".gif" };
-        List<string> supportedWriteFormats = new() { ".ppm", ".bmp" };
+        List<string> supportedReadFormats = new() { "ppm", "bmp", "gif" };
+        List<string> supportedWriteFormats = new() { "ppm", "bmp" };
 
         int errorsOccured = 0;
         StringBuilder exceptionMessage = new();
@@ -46,13 +49,17 @@ internal class CommandLineArgsParser
 
         if (destination == "")
         {
-            destination = source[..^4];
+            destination = Path.GetFileNameWithoutExtension(source);
+        }
+        else
+        {
+            string fileName = source[source.LastIndexOf("\\")..source.LastIndexOf(".")];
+            destination += fileName;
         }
 
-        string destinationFileName = Path.GetFileNameWithoutExtension(source) + 
-            "_FROM_" + Path.GetExtension(source)[1..].ToUpper() + "." + goalFormat;
+        destination += "." + goalFormat;
 
-        destination += "\\" + destinationFileName;
+        //destination += "\\" + destinationFileName;
 
 
         if (!sourceParameterExists)
@@ -79,38 +86,34 @@ internal class CommandLineArgsParser
                 exceptionMessage.Append(errorsOccured + " source file doesn't exist \n");
             }
 
-            string extensionToRead = Path.GetExtension(source);
-            if (!supportedReadFormats.Contains(extensionToRead))
+            string sourceFormat = new FormatReader().GetFileFormat(source);
+            // Path.GetExtension(source);
+            if (!supportedReadFormats.Contains(sourceFormat))
             {
                 string supportedReadExtensions = string.Join(' ', supportedReadFormats);
 
                 errorsOccured += 1;
-                exceptionMessage.Append(errorsOccured + $" you try to read {extensionToRead} but only {supportedReadExtensions} are supported\n");
+                exceptionMessage.Append(errorsOccured + $" you try to read {sourceFormat} but only {supportedReadExtensions} are supported\n");
             }
         }
 
         if (!string.IsNullOrEmpty(goalFormat)
-            && !supportedWriteFormats.Contains("." + goalFormat))
+            && !supportedWriteFormats.Contains(goalFormat))
         {
-            string extensionToWrite = "." + goalFormat;
-            if (!supportedReadFormats.Contains(extensionToWrite))
-            {
-                string supportedWriteExtensions = string.Join(' ', supportedWriteFormats);
+            string supportedWriteExtensions = string.Join(' ', supportedWriteFormats);
 
-                errorsOccured += 1;
-                exceptionMessage.Append(errorsOccured + $" you try to convert to {extensionToWrite} but only {supportedWriteExtensions} are supported\n");
-            }
+            errorsOccured += 1;
+            exceptionMessage.Append(errorsOccured + $" you try to convert to {goalFormat} but only {supportedWriteExtensions} are supported\n");
         }
 
         if (!string.IsNullOrEmpty(source) && !string.IsNullOrEmpty(goalFormat))
         {
-            string extensionToRead = Path.GetExtension(source);
-            string extensionToWrite = "." + goalFormat;
+            string sourceFormat = new FormatReader().GetFileFormat(source);
 
-            if (extensionToRead == extensionToWrite)
+            if (sourceFormat == goalFormat)
             {
                 errorsOccured += 1;
-                exceptionMessage.Append(errorsOccured + $" you try to convert to the same format: {extensionToRead} to {extensionToWrite} \n");
+                exceptionMessage.Append(errorsOccured + $" you try to convert to the same format: {sourceFormat} to {goalFormat} \n");
             }
         }
 
@@ -121,4 +124,6 @@ internal class CommandLineArgsParser
 
         return (source, goalFormat, destination);
     }
+
+
 }

@@ -10,9 +10,10 @@ public class ImageConverter
 
     private IImageWriter _writer;
 
+    // TODO: change source file extension retrieval
     public void Convert(string source, string goalFormat, string destination)
     {
-        string sourceFormat = source[^3..];
+        string sourceFormat = new FormatReader().GetFileFormat(source);
 
         SetReaderWriter(sourceFormat, goalFormat);
 
