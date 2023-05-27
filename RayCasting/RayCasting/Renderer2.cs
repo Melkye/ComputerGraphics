@@ -19,26 +19,40 @@ public class Renderer2
     public byte[,] Render(int height, int width)
     {
         byte[,] image = new byte[height, width];
-        float pixelWidthAngle = Scene.Camera.FieldOfView / width * (float)(Math.PI / 180);
-        float pixelHeightAngle = Scene.Camera.FieldOfView / height * (float)(Math.PI / 180);
+        float verticalAngleBetweenTwoPixels = Scene.Camera.FieldOfView / (height - 1) * (float)(Math.PI / 180);
+        float horizontalAngleBetweenTwoPixels = Scene.Camera.FieldOfView / (width - 1) * (float)(Math.PI / 180);
 
         Vector3D cameraDirectionForward = Scene.Camera.Direction;
         Vector3D cameraDirectionUp = Scene.Camera.UpDirection;
         Vector3D cameraDirectionRight = Scene.Camera.RightDirection;
 
+        float topMostPixelVerticalAngle = Scene.Camera.FieldOfView / 2 * (float)(Math.PI / 180);
+        float leftMostPixelHorizontalAngle = - Scene.Camera.FieldOfView / 2 * (float)(Math.PI / 180);
+
+
         for (int i = 0; i < image.GetLength(0); i++)
         {
-            float currentAngleVerticaly = pixelHeightAngle * height / 2 - pixelHeightAngle * i;
-            Vector3D verticalVector = (float)Math.Tan(currentAngleVerticaly) * cameraDirectionUp;
-            Vector3D orientationVectorWithoutWidth = cameraDirectionForward + verticalVector;
+            /// varies from height/2 (upper border) to -height/2 (lower border)
+
+            float pixelVerticalAngle = topMostPixelVerticalAngle - verticalAngleBetweenTwoPixels * i;
+
+            //int pixelVerticalNumCountingFromCamForwardDir = (height / 2) - i;
+            //float pixelVerticalAngle = onePixelVerticalAngle * pixelVerticalNumCountingFromCamForwardDir;
+            Vector3D verticalVector = (float)Math.Tan(pixelVerticalAngle) * cameraDirectionUp;
+            
+            Vector3D pixelVerticalDirection = cameraDirectionForward + verticalVector;
 
             for (int j = 0; j < image.GetLength(1); j++)
             {
-                float currentAngleHorizontal = - pixelWidthAngle * width / 2 + pixelWidthAngle * j;
-                Vector3D horizontalVector = (float)Math.Tan(currentAngleHorizontal) * cameraDirectionRight;
-                Vector3D orientationVector = orientationVectorWithoutWidth + horizontalVector;
+                // varies from -width/2 (left border) to width/2 (right border)
+                float pixelHorizontalAngle = leftMostPixelHorizontalAngle + horizontalAngleBetweenTwoPixels * j;
+                //int pixelHorizontalNumCountingFromCamForwardDir = - (width / 2) + j;
+                //float pixelHorizontalAngle = onePixelHorizontalAngle * pixelHorizontalNumCountingFromCamForwardDir;
+                Vector3D horizontalVector = (float)Math.Tan(pixelHorizontalAngle) * cameraDirectionRight;
 
-                image[i, j] = Caster.Cast(Scene, orientationVector.GetAngles());
+                Vector3D pixelDirection = pixelVerticalDirection + horizontalVector;
+
+                image[i, j] = Caster.Cast(Scene, pixelDirection.GetAngles()); // TODO remove angles (?)
             }
         }
 
