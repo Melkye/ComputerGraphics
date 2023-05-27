@@ -7,4 +7,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Reference Include="ImageConverter">
+      <HintPath>..\..\ImageConverter\ImageConverter\bin\Debug\net6.0\ImageConverter.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

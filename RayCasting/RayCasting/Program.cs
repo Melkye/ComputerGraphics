@@ -6,20 +6,17 @@ using RayCasting.Cameras;
 using RayCasting.Scenes;
 using RayCasting.Casters;
 using RayCasting.Writers;
+using ImageConverter;
 
 Point3D coordOrigin = new(0, 0, -1);
 Vector3D negativeZDirection = new(0, 0, -1);
 Vector3D positiveYDirection = new(0, 1, 0);
-float fov = 120;
+float vFov = 120;
 
-// TODO: fix case when hres != vres
-// aspectRatio = hRes/vRes
-// fov becomes vFov
-// hFov = vFov  aspectRatio
-int vRes = 100;
-int hRes = 100;
+int vRes = 1080;
+int hRes = 1920;
 
-Camera cam1 = new(coordOrigin, negativeZDirection, positiveYDirection, fov);
+Camera cam1 = new(coordOrigin, negativeZDirection, positiveYDirection, vFov);
 
 Sphere sphere1 = new(new(0, 0, -7), 1f);
 Sphere sphere2 = new(new(0.8f, 1, -5), 0.5f);
@@ -43,15 +40,15 @@ Scene nineShperesDeskAndPlane = new(cam1, downsideLight,
     new IIntersectable[] {
         new Sphere(new(-1.5f, 1.5f, -5), 0.5f),
         new Sphere(new(0, 1.5f, -5), 0.5f),
-        new Sphere(new(1.5f, 1.5f, -5), 0.5f),
-        new Sphere(new(-1.5f, 0, -5), 0.5f),
+        new Sphere(new(3f, 2f, -5), 0.5f),
+        new Sphere(new(-6f, 0, -5), 0.5f),
         new Sphere(new(0, 0, -5), 0.5f),
         new Sphere(new(1.5f, 0, -5), 0.5f),
         new Sphere(new(-1.5f, -1.5f, -5), 0.5f),
         new Sphere(new(0, -1.5f, -5), 0.5f),
         new Sphere(new(1.5f, -1.5f, -5), 0.5f),
 
-        new Disk(new(0, 0, -10), 2, new(0, 1, 1)),
+        //new Disk(new(0, 0, -10), 2, new(0, 1, 1)),
 
         //new Sphere(new(1, 0, -3), 1)
 
@@ -59,20 +56,35 @@ Scene nineShperesDeskAndPlane = new(cam1, downsideLight,
     });
 ;
 
-Renderer renderer = new(nineShperesDeskAndPlane, new LightNeglectingCaster());
-Renderer renderer2 = new(nineShperesDeskAndPlane, new LightNeglectingCaster());
-Renderer2 renderer3 = new(nineShperesDeskAndPlane, new LightNeglectingCaster());
+Renderer renderer = new(nineShperesDeskAndPlane, new LightConsideringCaster());
 
-//byte[,] image = renderer.Render();
-byte[,] image2 = renderer2.Render(vRes, hRes);
-byte[,] image3 = renderer3.Render(vRes, hRes);
+byte[,] image = renderer.Render(vRes, hRes);
 
 ConsoleWriter writer = new();
+ImageConverter.Bmp.BmpImageWriter bmpWriter = new();
+
+bmpWriter.Write(OneColorByteArrayToImage(image), "C:\\Repos\\ComputerGraphics\\RayCasting\\RayCasting\\image.bmp");
 
 //writer.WriteNeglectingLight(image);
 
 Console.WriteLine("----------------------------------------------------");
 
-writer.Write(image2);
+//writer.Write(image2);
 Console.WriteLine("----------------------------------------------------");
-writer.Write(image3);
+//writer.Write(image3);
+
+Image OneColorByteArrayToImage(byte[,] image)
+{
+    int height = image.GetLength(0);
+    int width = image.GetLength(1);
+    Pixel[,] pixels = new Pixel[height, width];
+    for (int i = 0; i < height; i++)
+    {
+        for (int j = 0; j < width; j++)
+        {
+            byte color = image[i, j];
+            pixels[i, j] = new Pixel(color, color, color);
+        }
+    }
+    return new Image(pixels);
+}
