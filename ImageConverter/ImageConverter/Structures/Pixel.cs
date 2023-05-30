@@ -1,4 +1,4 @@
-﻿namespace ImageConverter;
+﻿namespace ImageConverter.Structures;
 
 public readonly struct Pixel
 {

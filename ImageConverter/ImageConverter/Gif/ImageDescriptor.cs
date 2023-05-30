@@ -1,4 +1,5 @@
 using System.IO;
+using ImageConverter.Structures;
 
 namespace ImageConverter.Gif;
 

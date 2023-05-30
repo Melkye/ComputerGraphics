@@ -1,10 +1,13 @@
 using System.Buffers.Binary;
 using System.Text;
+using ImageConverter.Interfaces;
+using ImageConverter.Structures;
 
 namespace ImageConverter.Gif;
 
 public class GifImageReader : IImageReader
 {
+    private const string FileMagicNumber = "GIF8";
     public Image Read(string source)
     {
         using FileStream fs = new(source, FileMode.Open, FileAccess.Read);
@@ -34,15 +37,23 @@ public class GifImageReader : IImageReader
 
         (byte[] compressedBitMap, ImageDescriptor descriptor, byte lzwMinimumCodeSize) = ReadImage(fs);
 
-        // TODO: write own compresser
         LzwCompressor compressor = new();
         byte[]? uncompressedData = compressor.Decompress(compressedBitMap, lzwMinimumCodeSize);
-
 
         Pixel[,] pixelMap = CreateImageFromColorReferences(uncompressedData, globalColorTable, descriptor.Height, descriptor.Width);
         Image image = new(pixelMap);
 
         return image;
+    }
+
+    public bool CanRead(string source)
+    {
+        using (var fileStream = new FileStream(source, FileMode.Open, FileAccess.Read))
+        {
+            string startingBytesString = ReadString(FileMagicNumber.Length, Encoding.ASCII, fileStream);
+
+            return startingBytesString == FileMagicNumber;
+        }
     }
 
     private Pixel[,] CreateImageFromColorReferences(byte[] colorReferences, Pixel[] colorTable, int height, int width)
