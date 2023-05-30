@@ -1,4 +1,4 @@
-﻿using ImageConverter.Bmp;
+using ImageConverter.Bmp;
 using ImageConverter.Gif;
 using ImageConverter.Interfaces;
 using ImageConverter.Ppm;
@@ -16,13 +16,9 @@ public class ImageConverter
 
         Image image = reader.Read(source);
 
+    /// <exception cref="ArgumentException"></exception>
         writer.Write(image, destination);
     }
-
-    /// <param name="source"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentException"></exception>
-    private IImageReader GetReader(string source)
     {
         IImageReader reader = null;
 
@@ -50,13 +46,7 @@ public class ImageConverter
         return reader;
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="format"></param>
-    /// <returns></returns>
     /// <exception cref="ArgumentException"></exception>
-    private IImageWriter GetWriter(string format)
     {
         IImageWriter writer = null;
 

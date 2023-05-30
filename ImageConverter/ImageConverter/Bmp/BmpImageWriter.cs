@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using System.Buffers.Binary;
 using ImageConverter.Interfaces;
 using ImageConverter.Structures;
