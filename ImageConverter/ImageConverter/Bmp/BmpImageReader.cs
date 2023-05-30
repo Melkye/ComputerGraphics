@@ -1,14 +1,14 @@
-﻿using System.Buffers.Binary;
+using System.Buffers.Binary;
 using System.IO;
 using System.Text;
-using static System.Net.Mime.MediaTypeNames;
+using ImageConverter.Interfaces;
+using ImageConverter.Structures;
 
 namespace ImageConverter.Bmp
 {
     public class BmpImageReader : IImageReader
     {
-        // TODO: create normal name
-        private const string fileFormatNumber = "BM";
+        private const string FileMagicNumber = "BM";
         public Image Read(string source)
         {
             Pixel[,] pixelMap;
@@ -40,6 +40,17 @@ namespace ImageConverter.Bmp
             }
             return new Image(pixelMap);
         }
+
+        public bool CanRead(string source)
+        {
+            using (var fileStream = new FileStream(source, FileMode.Open, FileAccess.Read))
+            {
+                string startingBytesString = ReadString(FileMagicNumber.Length, Encoding.ASCII, fileStream);
+
+                return startingBytesString == FileMagicNumber;
+            }
+        }
+
         private BmpFileHeader ReadFileHeader(FileStream fileStream)
         {
             string signature = ReadString(2, Encoding.ASCII, fileStream);

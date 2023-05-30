@@ -1,6 +1,7 @@
-using ImageConverter;
 using ImageConverter.Bmp;
+using ImageConverter.Interfaces;
 using ImageConverter.Ppm;
+using ImageConverter.Structures;
 
 namespace ImageConverter.Tests;
 

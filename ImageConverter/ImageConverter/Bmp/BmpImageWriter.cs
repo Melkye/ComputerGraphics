@@ -1,21 +1,17 @@
-﻿using System.Text;
+using System.Text;
 using System.Buffers.Binary;
-using static System.Net.Mime.MediaTypeNames;
-using System.IO;
-using System.IO.Pipes;
+using ImageConverter.Interfaces;
+using ImageConverter.Structures;
 
 namespace ImageConverter.Bmp
 {
     public class BmpImageWriter : IImageWriter
     {
-        private const string fileFormatSignature = "BM";
+        private const string FileFormatSignature = "BM";
+        private const string FileFormat = "bmp";
         public void Write(Image image, string destination)
         {
-            if(!File.Exists(destination)) 
-            {
-                File.Create(destination).Dispose();
-            }
-            using (var fileStream = new FileStream(destination, FileMode.Truncate, FileAccess.Write))
+            using (var fileStream = new FileStream(destination, FileMode.Create, FileAccess.Write))
             {
                 //Info about pixel array row size
                 int width = image.Width;
@@ -30,7 +26,7 @@ namespace ImageConverter.Bmp
                 int fileSize = fileHeaderSize + infoHeaderSize + height * (bytesInRow + rowPaddingSizeInBytes);
                 int dataOffset = fileHeaderSize + infoHeaderSize;
 
-                BmpFileHeader fileHeader = new BmpFileHeader(fileFormatSignature, fileSize, dataOffset);
+                BmpFileHeader fileHeader = new BmpFileHeader(FileFormatSignature, fileSize, dataOffset);
 
                 BmpInfoHeader infoHeader = new BmpInfoHeader(height, width, bitsPerPixel);
 
@@ -57,6 +53,12 @@ namespace ImageConverter.Bmp
                 }
             }
         }
+
+        public bool CanWrite(string format)
+        {
+            return format == FileFormat;
+        }
+
         private void WriteFileHeader(BmpFileHeader fileHeader, FileStream fileStream)
         {
             string signature = fileHeader.Signature;

@@ -1,4 +1,6 @@
-namespace ImageConverter;
+using ImageConverter.Structures;
+
+namespace ImageConverter.Interfaces;
 public interface IImageReader
 {
     Image Read(string source);

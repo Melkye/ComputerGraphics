@@ -1,73 +1,75 @@
-﻿using ImageConverter.Bmp;
+using ImageConverter.Bmp;
 using ImageConverter.Gif;
+using ImageConverter.Interfaces;
 using ImageConverter.Ppm;
+using ImageConverter.Structures;
 
 namespace ImageConverter;
 
 public class ImageConverter
 {
-    private IImageReader _reader;
-
-    private IImageWriter _writer;
-
+    /// <exception cref="ArgumentException"></exception>
     public void Convert(string source, string goalFormat, string destination)
     {
-        string sourceFormat = new FormatReader().GetFileFormat(source);
+        var reader =  GetReader(source);
+        var writer = GetWriter(goalFormat);
 
-        SetReader(source);
-        SetWriter(goalFormat);
+        Image image = reader.Read(source);
 
-        Image image = _reader.Read(source);
-
-        _writer.Write(image, destination);
+    /// <exception cref="ArgumentException"></exception>
+        writer.Write(image, destination);
     }
-
-    private void SetReader(string source)
     {
-        List<IImageReader> readers = new()
+        IImageReader reader = null;
+
+        List<IImageReader> availableReaders = new()
         { 
             new PpmImageReader(),
             new BmpImageReader(),
             new GifImageReader(),
         };
 
-
-        foreach(var reader in readers)
+        foreach(var r in availableReaders)
         {
-            if (reader.CanRead(source))
+            if (r.CanRead(source))
             {
-                _reader = reader;
+                reader = r;
                 break;
             }
         }
 
-        if (_reader is null)
+        if (reader is null)
         {
             throw new ArgumentException("Cant read this file format");
         }
+
+        return reader;
     }
 
-    public void SetWriter(string goalFormat)
+    /// <exception cref="ArgumentException"></exception>
     {
-        List<IImageWriter> writers = new()
+        IImageWriter writer = null;
+
+        List<IImageWriter> availableWriters = new()
         {
             new PpmImageWriter(),
             new BmpImageWriter(),
         };
 
-
-        foreach (var writer in writers)
+        foreach (var w in availableWriters)
         {
-            if (writer.CanWrite(goalFormat))
+            if (w.CanWrite(format))
             {
-                _writer = writer;
+                writer = w;
                 break;
             }
         }
 
-        if (_writer is null)
+        if (writer is null)
         {
             throw new ArgumentException("Cant write this file format");
         }
+
+        return writer;
     }
 }
