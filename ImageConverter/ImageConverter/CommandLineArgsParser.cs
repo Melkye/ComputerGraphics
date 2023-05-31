@@ -1,9 +1,6 @@
-using System.IO;
 using System.Text;
 
 namespace ImageConverter;
-
-// TODO change source extension retrieval
 
 internal class CommandLineArgsParser
 {
