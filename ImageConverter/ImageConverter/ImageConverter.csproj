@@ -8,4 +8,17 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ImageConverter.Common\ImageConverter.Common.csproj" />
+    <ProjectReference Include="..\Reader.Bmp\Reader.Bmp.csproj" />
+    <ProjectReference Include="..\Reader.Gif\Reader.Gif.csproj" />
+    <ProjectReference Include="..\Reader.Ppm\Reader.Ppm.csproj" />
+    <ProjectReference Include="..\Writer.Bmp\Writer.Bmp.csproj" />
+    <ProjectReference Include="..\Writer.Ppm\Writer.Ppm.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Images\" />
+  </ItemGroup>
+
 </Project>

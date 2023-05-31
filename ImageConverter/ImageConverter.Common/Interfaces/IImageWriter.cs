@@ -1,6 +1,6 @@
-﻿using ImageConverter.Structures;
+﻿using ImageConverter.Common.Structures;
 
-namespace ImageConverter.Interfaces;
+namespace ImageConverter.Common.Interfaces;
 public interface IImageWriter
 {
     void Write(Image image, string destination);

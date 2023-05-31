@@ -1,9 +1,9 @@
 using System.Buffers.Binary;
 using System.Text;
-using ImageConverter.Interfaces;
-using ImageConverter.Structures;
+using ImageConverter.Common.Interfaces;
+using ImageConverter.Common.Structures;
 
-namespace ImageConverter.Gif;
+namespace Reader.Gif;
 
 public class GifImageReader : IImageReader
 {

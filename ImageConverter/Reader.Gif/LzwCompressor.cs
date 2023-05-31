@@ -1,6 +1,5 @@
-using System.Collections;
 
-namespace ImageConverter.Gif;
+namespace Reader.Gif;
 
 public class LzwCompressor
 {

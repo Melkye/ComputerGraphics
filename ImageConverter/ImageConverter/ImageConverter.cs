@@ -1,8 +1,12 @@
-using ImageConverter.Bmp;
-using ImageConverter.Gif;
-using ImageConverter.Interfaces;
-using ImageConverter.Ppm;
-using ImageConverter.Structures;
+using ImageConverter.Common.Interfaces;
+using ImageConverter.Common.Structures;
+
+using Reader.Ppm;
+using Reader.Bmp;
+using Reader.Gif;
+using Writer.Ppm;
+using Writer.Bmp;
+// TODO: add dynamic load of readers/writers and remove proj refs
 
 namespace ImageConverter;
 
@@ -16,9 +20,11 @@ public class ImageConverter
 
         Image image = reader.Read(source);
 
-    /// <exception cref="ArgumentException"></exception>
         writer.Write(image, destination);
     }
+
+    /// <exception cref="ArgumentException"></exception>
+    private IImageReader GetReader(string source)
     {
         IImageReader reader = null;
 
@@ -47,6 +53,7 @@ public class ImageConverter
     }
 
     /// <exception cref="ArgumentException"></exception>
+    private IImageWriter GetWriter(string format)
     {
         IImageWriter writer = null;
 

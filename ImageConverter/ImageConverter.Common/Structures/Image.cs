@@ -1,4 +1,4 @@
-﻿namespace ImageConverter.Structures;
+﻿namespace ImageConverter.Common.Structures;
 
 public class Image
 {

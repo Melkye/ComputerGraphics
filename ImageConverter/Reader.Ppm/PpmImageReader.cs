@@ -1,8 +1,8 @@
 using System.Text;
-using ImageConverter.Interfaces;
-using ImageConverter.Structures;
+using ImageConverter.Common.Interfaces;
+using ImageConverter.Common.Structures;
 
-namespace ImageConverter.Ppm;
+namespace Reader.Ppm;
 
 public class PpmImageReader : IImageReader
 {
