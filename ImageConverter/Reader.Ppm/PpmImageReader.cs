@@ -1,10 +1,12 @@
-﻿using System.Text;
+using System.Text;
+using ImageConverter.Common.Interfaces;
+using ImageConverter.Common.Structures;
 
-namespace ImageConverter.Ppm;
+namespace Reader.Ppm;
 
 public class PpmImageReader : IImageReader
 {
-    private const string fileFormatNumber = "P3";
+    private const string FileMagicNumber = "P3";
     public Image Read(string source)
     {
         Pixel[,] pixelmap;
@@ -13,7 +15,7 @@ public class PpmImageReader : IImageReader
             try
             {
                 string fileFormatNumberInFile = ReadUntilDelimiter(streamReader);
-                if (fileFormatNumberInFile != fileFormatNumber)
+                if (fileFormatNumberInFile != FileMagicNumber)
                     throw new ArgumentException("This file is not plain PPM format");
                 int width = int.Parse(ReadUntilDelimiter(streamReader));
                 int height = int.Parse(ReadUntilDelimiter(streamReader));
@@ -43,6 +45,24 @@ public class PpmImageReader : IImageReader
             }
         }
         return new Image(pixelmap);
+    }
+
+    public bool CanRead(string source)
+    {
+        using (var fileStream = new FileStream(source, FileMode.Open, FileAccess.Read))
+        {
+            string startingBytesString = ReadString(FileMagicNumber.Length, Encoding.ASCII, fileStream);
+
+            return startingBytesString == FileMagicNumber;
+        }
+    }
+
+    private string ReadString(int size, Encoding encoding, FileStream fileStream)
+    {
+        byte[] stringSplitIntoSizeBytes = new byte[size];
+        fileStream.Read(stringSplitIntoSizeBytes);
+        string result = encoding.GetString(stringSplitIntoSizeBytes);
+        return result;
     }
 
     private string ReadUntilDelimiter(StreamReader stream)

@@ -15,6 +15,12 @@ internal class Program
             Console.WriteLine(e.Message);
             Console.ForegroundColor = ConsoleColor.White;
         }
+        catch (Exception e)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(e.Message);
+            Console.ForegroundColor = ConsoleColor.White;
+        }
 
         try
         {
@@ -27,7 +33,6 @@ internal class Program
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine(e.Message);
             Console.ForegroundColor = ConsoleColor.White;
-
         }
     }
 }

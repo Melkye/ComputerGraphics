@@ -1,6 +1,7 @@
 using System.IO;
+using ImageConverter.Common.Structures;
 
-namespace ImageConverter.Gif;
+namespace Reader.Gif;
 
 public readonly struct ImageDescriptor
 {

@@ -1,6 +1,6 @@
-﻿namespace ImageConverter.Bmp;
+﻿namespace Bmp.Common;
 
-internal readonly struct BmpFileHeader
+public readonly struct BmpFileHeader
 {
     public string Signature { get; }
     public int FileSize { get; }

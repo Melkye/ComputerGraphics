@@ -1,40 +1,82 @@
-﻿using ImageConverter.Bmp;
-using ImageConverter.Gif;
-using ImageConverter.Ppm;
+using ImageConverter.Common.Interfaces;
+using ImageConverter.Common.Structures;
+
+using Reader.Ppm;
+using Reader.Bmp;
+using Reader.Gif;
+using Writer.Ppm;
+using Writer.Bmp;
+// TODO: add dynamic load of readers/writers and remove proj refs
 
 namespace ImageConverter;
 
 public class ImageConverter
 {
-    private IImageReader _reader;
-
-    private IImageWriter _writer;
-
-    // TODO: change source file extension retrieval
+    /// <exception cref="ArgumentException"></exception>
     public void Convert(string source, string goalFormat, string destination)
     {
-        string sourceFormat = new FormatReader().GetFileFormat(source);
+        var reader =  GetReader(source);
+        var writer = GetWriter(goalFormat);
 
-        SetReaderWriter(sourceFormat, goalFormat);
+        Image image = reader.Read(source);
 
-        Image image = _reader.Read(source);
-
-        _writer.Write(image, destination);
+        writer.Write(image, destination);
     }
 
-    private void SetReaderWriter(string sourceFormat, string goalFormat)
+    /// <exception cref="ArgumentException"></exception>
+    private IImageReader GetReader(string source)
     {
-        _reader = sourceFormat switch
-        {
-            "ppm" => new PpmImageReader(),
-            "bmp" => new BmpImageReader(),
-            "gif" => new GifImageReader(),
+        IImageReader reader = null;
+
+        List<IImageReader> availableReaders = new()
+        { 
+            new PpmImageReader(),
+            new BmpImageReader(),
+            new GifImageReader(),
         };
 
-        _writer = goalFormat switch
+        foreach(var r in availableReaders)
         {
-            "ppm" => new PpmImageWriter(),
-            "bmp" => new BmpImageWriter(),
+            if (r.CanRead(source))
+            {
+                reader = r;
+                break;
+            }
+        }
+
+        if (reader is null)
+        {
+            throw new ArgumentException("Cant read this file format");
+        }
+
+        return reader;
+    }
+
+    /// <exception cref="ArgumentException"></exception>
+    private IImageWriter GetWriter(string format)
+    {
+        IImageWriter writer = null;
+
+        List<IImageWriter> availableWriters = new()
+        {
+            new PpmImageWriter(),
+            new BmpImageWriter(),
         };
+
+        foreach (var w in availableWriters)
+        {
+            if (w.CanWrite(format))
+            {
+                writer = w;
+                break;
+            }
+        }
+
+        if (writer is null)
+        {
+            throw new ArgumentException("Cant write this file format");
+        }
+
+        return writer;
     }
 }
