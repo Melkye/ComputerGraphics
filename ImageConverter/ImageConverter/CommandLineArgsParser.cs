@@ -1,9 +1,6 @@
-﻿using System.IO;
 using System.Text;
 
 namespace ImageConverter;
-
-// TODO change source extension retrieval
 
 internal class CommandLineArgsParser
 {
@@ -13,9 +10,6 @@ internal class CommandLineArgsParser
     /// <exception cref="ArgumentException"> thrown if error occurs when parsing</exception>
     public (string source, string goalFormat, string destination) ParseArgs(string[] args)
     {
-        List<string> supportedReadFormats = new() { "ppm", "bmp", "gif" };
-        List<string> supportedWriteFormats = new() { "ppm", "bmp" };
-
         int errorsOccured = 0;
         StringBuilder exceptionMessage = new();
 
@@ -27,7 +21,6 @@ internal class CommandLineArgsParser
         bool goalFormatParameterExists = false;
         bool destinationParametеrExists = false;
 
-        // TODO: do smth with ToLower
         foreach (string arg in args)
         {
             if (arg.StartsWith("--source="))
@@ -59,9 +52,6 @@ internal class CommandLineArgsParser
 
         destination += "." + goalFormat;
 
-        //destination += "\\" + destinationFileName;
-
-
         if (!sourceParameterExists)
         {
             errorsOccured += 1;
@@ -85,36 +75,6 @@ internal class CommandLineArgsParser
                 errorsOccured += 1;
                 exceptionMessage.Append(errorsOccured + " source file doesn't exist \n");
             }
-
-            string sourceFormat = new FormatReader().GetFileFormat(source);
-            // Path.GetExtension(source);
-            if (!supportedReadFormats.Contains(sourceFormat))
-            {
-                string supportedReadExtensions = string.Join(' ', supportedReadFormats);
-
-                errorsOccured += 1;
-                exceptionMessage.Append(errorsOccured + $" you try to read {sourceFormat} but only {supportedReadExtensions} are supported\n");
-            }
-        }
-
-        if (!string.IsNullOrEmpty(goalFormat)
-            && !supportedWriteFormats.Contains(goalFormat))
-        {
-            string supportedWriteExtensions = string.Join(' ', supportedWriteFormats);
-
-            errorsOccured += 1;
-            exceptionMessage.Append(errorsOccured + $" you try to convert to {goalFormat} but only {supportedWriteExtensions} are supported\n");
-        }
-
-        if (!string.IsNullOrEmpty(source) && !string.IsNullOrEmpty(goalFormat))
-        {
-            string sourceFormat = new FormatReader().GetFileFormat(source);
-
-            if (sourceFormat == goalFormat)
-            {
-                errorsOccured += 1;
-                exceptionMessage.Append(errorsOccured + $" you try to convert to the same format: {sourceFormat} to {goalFormat} \n");
-            }
         }
 
         if (errorsOccured > 0)
@@ -124,6 +84,4 @@ internal class CommandLineArgsParser
 
         return (source, goalFormat, destination);
     }
-
-
 }

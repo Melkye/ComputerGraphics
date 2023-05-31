@@ -1,6 +1,5 @@
-﻿namespace ImageConverter.Bmp;
-
-internal readonly struct BmpInfoHeader
+﻿namespace Bmp.Common;
+public readonly struct BmpInfoHeader
 {
     public int Width { get; }
     public int Height { get; }
