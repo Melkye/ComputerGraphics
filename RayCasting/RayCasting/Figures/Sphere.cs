@@ -1,4 +1,5 @@
 ﻿using RayCasting.Objects;
+using RayCasting.Transformations;
 
 namespace RayCasting.Figures;
 public class Sphere : IIntersectable
@@ -51,5 +52,11 @@ public class Sphere : IIntersectable
         Vector3D normalVector = new Vector3D(Center, point).Normalized();
 
         return normalVector;
+    }
+
+    public void Transform(TransformationMatrix4x4 transformation)
+    {
+        // TODO: implement
+        throw new NotImplementedException();
     }
 }

@@ -1,4 +1,5 @@
 using RayCasting.Objects;
+using RayCasting.Transformations;
 
 namespace RayCasting.Figures;
 
@@ -56,5 +57,12 @@ public class Triangle : IIntersectable
         Vector3D vecAB = new(vertex0, vertex1);
         Vector3D vecBC = new(vertex1, vertex2);
         return -vecAB.Cross(vecBC).Normalized();
+    }
+
+    public void Transform(TransformationMatrix4x4 transformation)
+    {
+        vertex0 = transformation.Multiply(vertex0);
+        vertex1 = transformation.Multiply(vertex1);
+        vertex2 = transformation.Multiply(vertex2);
     }
 }
