@@ -15,7 +15,7 @@ public class CastingTests
         // Arrange
         Point3D coordOrigin = new(0, 0, 0);
 
-        Camera camera = new(coordOrigin, new(0, 0, -1), 60);
+        Camera camera = new(coordOrigin, new(0, 0, -1), new(1, 0, 0), 60);
         DirectedLightSource lightSource = new(new(0, 1, 0), new(0, -1, 0));
         IIntersectable[] emptyFigureList = Array.Empty<IIntersectable>();
 
@@ -23,7 +23,7 @@ public class CastingTests
 
         LightConsideringCaster caster = new();
 
-        (float, float, float) pixelAngles = camera.Direction.GetAngles();
+        (float, float, float) pixelAngles = camera.ForwardDirection.GetAngles();
 
         // Act
         byte brightness = caster.Cast(scene, pixelAngles);
@@ -38,7 +38,7 @@ public class CastingTests
         // Arrange
         Point3D coordOrigin = new(0, 0, 0);
 
-        Camera camera = new(coordOrigin, new(0, 0, -1), 60);
+        Camera camera = new(coordOrigin, new(0, 0, -1), new(1, 0, 0), 60);
         DirectedLightSource lightSource = new(new(0, 0, 0), new(0, 0, -1));
         IIntersectable[] figures = new IIntersectable[]
         {
@@ -49,7 +49,7 @@ public class CastingTests
 
         LightConsideringCaster caster = new();
 
-        (float, float, float) pixelAngles = camera.Direction.GetAngles();
+        (float, float, float) pixelAngles = camera.ForwardDirection.GetAngles();
 
         // Act
         byte brightness = caster.Cast(scene, pixelAngles);
