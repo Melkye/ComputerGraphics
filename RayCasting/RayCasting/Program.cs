@@ -16,10 +16,11 @@ Vector3D negativeZDirection = new(0, 0, -1);
 Vector3D positiveYDirection = new(0, 1, 0);
 float hFov = 90;
 
-int vRes = 500;
-int hRes = 500;
+int vRes = 70;
+int hRes = 70;
 
-Camera cam1 = new(coordOrigin, negativeZDirection, positiveYDirection, hFov);
+DirectedLightSource upsideLight = new(new(), new(0, 1, 0));
+Camera cam1 = new(new(0, 1, 0), new(0, -1, 0), new(0, 0, 1), hFov);
 
 //Sphere sphere1 = new(new(0, 0, -7), 1f);
 //Sphere sphere2 = new(new(0.8f, 1, -5), 0.5f);
@@ -32,7 +33,7 @@ Camera cam1 = new(coordOrigin, negativeZDirection, positiveYDirection, hFov);
 
 //Point3D lightOrigin = new(-1, 4, 3); // test cases: (-10, 1, 1) (-1, 10, 1) (-1, 1, 1) (-1, 4, 3) (1, 1, -1)
 //DirectedLightSource lightSource = new(lightOrigin, new(lightOrigin, new(0, 0, -1)));
-//DirectedLightSource downsideLight = new(new(), new(0, -1, 0));
+DirectedLightSource downsideLight = new(new(), new(0, -1, 0));
 
 //Scene lotsOfThings = new(cam1, lightSource, figures);
 //Scene sphereInCenterHalfLighted = new(cam1, downsideLight, new IIntersectable[] { new Sphere(new(0, 0, -3), 1) });
@@ -62,48 +63,68 @@ Camera cam1 = new(coordOrigin, negativeZDirection, positiveYDirection, hFov);
 // base image
 float coordZ = -10;
 
-Scene triangleHeaven = new(cam1, downsideLight,
-    new IIntersectable[]
-    {
-        new Triangle(new(-5f, 4f, coordZ), new(-4f, 6f, coordZ), new(-3f,4f, coordZ)),
-        new Triangle(new(-3f, 4f, coordZ), new(-2f, 6f, coordZ), new(-1f, 4f, coordZ)),
-        new Triangle(new(-1f, 4f, coordZ), new(0f, 6f, coordZ), new(1f, 4f, coordZ)),
-        new Triangle(new(1f, 4f, coordZ), new(2f, 6f, coordZ), new(3f, 4f, coordZ)),
-        new Triangle(new(3f, 4f, coordZ), new(4f, 6f, coordZ), new(5f, 4f, coordZ)),
+//cam1.Rotate(Axes.Z, 20);
 
-        new Triangle(new(-5f, 2f, coordZ), new(-4f, 4f, coordZ), new(-3f, 2f, coordZ)),
-        new Triangle(new(-3f, 2f, coordZ), new(-2f, 4f, coordZ), new(-1f, 2f, coordZ)),
-        new Triangle(new(-1f, 2f, coordZ), new(0f, 4f, coordZ), new(1f, 2f, coordZ)),
-        new Triangle(new(1f, 2f, coordZ), new(2f, 4f, coordZ), new(3f, 2f, coordZ)),
-        new Triangle(new(3f, 2f, coordZ), new(4f, 4f, coordZ), new(5f, 2f, coordZ)),
+// TODO make this work as expected
+cam1.Translate(Axes.X, 0.5f);
 
-        new Triangle(new(-5f, 0f, coordZ), new(-4f, 2f, coordZ), new(-3f, 0f, coordZ)),
-        new Triangle(new(-3f, 0f, coordZ), new(-2f, 2f, coordZ), new(-1f, 0f, coordZ)),
-        new Triangle(new(-1f, 0f, coordZ), new(0f, 2f, coordZ), new(1f, 0f, coordZ)),
-        new Triangle(new(1f, 0f, coordZ), new(2f, 2f, coordZ), new(3f, 0f, coordZ)),
-        new Triangle(new(3f, 0f, coordZ), new(4f, 2f, coordZ), new(5f, 0f, coordZ)),
+var rotate90AntiClockwiseXY = new TransformationMatrixBuilder().GetRotationMatrix4x4(Axes.Z, 45);
 
-        new Triangle(new(-5f, -2f, coordZ), new(-4f, 0f, coordZ), new(-3f, -2f, coordZ)),
-        new Triangle(new(-3f, -2f, coordZ), new(-2f, 0f, coordZ), new(-1f, -2f, coordZ)),
-        new Triangle(new(-1f, -2f, coordZ), new(0f, 0f, coordZ), new(1f, -2f, coordZ)),
-        new Triangle(new(1f, -2f, coordZ), new(2f, 0f, coordZ), new(3f, -2f, coordZ)),
-        new Triangle(new(3f, -2f, coordZ), new(4f, 0f, coordZ), new(5f, -2f, coordZ)),
+var moveNeg2X = new TransformationMatrixBuilder().GetTranslationMatrix4x4(Axes.X, 0.5f);
 
-        new Triangle(new(-5f, -4f, coordZ), new(-4f, -2f, coordZ), new(-3f, -4f, coordZ)),
-        new Triangle(new(-3f, -4f, coordZ), new(-2f, -2f, coordZ), new(-1f, -4f, coordZ)),
-        new Triangle(new(-1f, -4f, coordZ), new(0f, -2f, coordZ), new(1f, -4f, coordZ)),
-        new Triangle(new(1f, -4f, coordZ), new(2f, -2f, coordZ), new(3f, -4f, coordZ)),
-        new Triangle(new(3f, -4f, coordZ), new(4f, -2f, coordZ), new(5f, -4f, coordZ)),
-    });
+var resultRotate = moveNeg2X.Multiply(rotate90AntiClockwiseXY);
 
-Renderer renderer = new(triangleHeaven, new LightNeglectingCaster());
+var cowTriangles = new ObjReader().Read();
 
-byte[,] image = renderer.Render(vRes, hRes);
+foreach (var triangle in cowTriangles)
+{
+    triangle.Transform(resultRotate);
+}
+
+Scene cowMoooo = new(cam1, upsideLight, cowTriangles);
+
+//Scene triangleHeaven = new(cam1, downsideLight,
+//    new IIntersectable[]
+//    {
+//        new Triangle(new(-5f, 4f, coordZ), new(-4f, 6f, coordZ), new(-3f,4f, coordZ)),
+//        new Triangle(new(-3f, 4f, coordZ), new(-2f, 6f, coordZ), new(-1f, 4f, coordZ)),
+//        new Triangle(new(-1f, 4f, coordZ), new(0f, 6f, coordZ), new(1f, 4f, coordZ)),
+//        new Triangle(new(1f, 4f, coordZ), new(2f, 6f, coordZ), new(3f, 4f, coordZ)),
+//        new Triangle(new(3f, 4f, coordZ), new(4f, 6f, coordZ), new(5f, 4f, coordZ)),
+
+//        new Triangle(new(-5f, 2f, coordZ), new(-4f, 4f, coordZ), new(-3f, 2f, coordZ)),
+//        new Triangle(new(-3f, 2f, coordZ), new(-2f, 4f, coordZ), new(-1f, 2f, coordZ)),
+//        new Triangle(new(-1f, 2f, coordZ), new(0f, 4f, coordZ), new(1f, 2f, coordZ)),
+//        new Triangle(new(1f, 2f, coordZ), new(2f, 4f, coordZ), new(3f, 2f, coordZ)),
+//        new Triangle(new(3f, 2f, coordZ), new(4f, 4f, coordZ), new(5f, 2f, coordZ)),
+
+//        new Triangle(new(-5f, 0f, coordZ), new(-4f, 2f, coordZ), new(-3f, 0f, coordZ)),
+//        new Triangle(new(-3f, 0f, coordZ), new(-2f, 2f, coordZ), new(-1f, 0f, coordZ)),
+//        new Triangle(new(-1f, 0f, coordZ), new(0f, 2f, coordZ), new(1f, 0f, coordZ)),
+//        new Triangle(new(1f, 0f, coordZ), new(2f, 2f, coordZ), new(3f, 0f, coordZ)),
+//        new Triangle(new(3f, 0f, coordZ), new(4f, 2f, coordZ), new(5f, 0f, coordZ)),
+
+//        new Triangle(new(-5f, -2f, coordZ), new(-4f, 0f, coordZ), new(-3f, -2f, coordZ)),
+//        new Triangle(new(-3f, -2f, coordZ), new(-2f, 0f, coordZ), new(-1f, -2f, coordZ)),
+//        new Triangle(new(-1f, -2f, coordZ), new(0f, 0f, coordZ), new(1f, -2f, coordZ)),
+//        new Triangle(new(1f, -2f, coordZ), new(2f, 0f, coordZ), new(3f, -2f, coordZ)),
+//        new Triangle(new(3f, -2f, coordZ), new(4f, 0f, coordZ), new(5f, -2f, coordZ)),
+
+//        new Triangle(new(-5f, -4f, coordZ), new(-4f, -2f, coordZ), new(-3f, -4f, coordZ)),
+//        new Triangle(new(-3f, -4f, coordZ), new(-2f, -2f, coordZ), new(-1f, -4f, coordZ)),
+//        new Triangle(new(-1f, -4f, coordZ), new(0f, -2f, coordZ), new(1f, -4f, coordZ)),
+//        new Triangle(new(1f, -4f, coordZ), new(2f, -2f, coordZ), new(3f, -4f, coordZ)),
+//        new Triangle(new(3f, -4f, coordZ), new(4f, -2f, coordZ), new(5f, -4f, coordZ)),
+//    });
+
+Renderer renderer = new(cowMoooo, new LightConsideringCaster());
+
+byte[,] cowImage = renderer.Render(vRes, hRes);
 
 //ConsoleWriter writer = new();
 BmpImageWriter bmpWriter = new();
 
-//bmpWriter.Write(OneColorByteArrayToImage(image), "C:\\Repos\\ComputerGraphics\\RayCasting\\RayCasting\\image.bmp");
+bmpWriter.Write(OneColorByteArrayToImage(cowImage), "C:\\Repos\\ComputerGraphics\\RayCasting\\RayCasting\\image.bmp");
 
 
 //// move left by -2
@@ -117,36 +138,36 @@ BmpImageWriter bmpWriter = new();
 //}
 
 // rotate left by 45 degrees
-var transformationBuilder = new TransformationMatrixBuilder();
+////var transformationBuilder = new TransformationMatrixBuilder();
 
 
-// TODO check correcntess of multiple transform
-TransformationMatrix4x4 rotateLeft = transformationBuilder.GetRotationMatrix4x4(Axes.Y, 30);
-TransformationMatrix4x4 rotateUp = transformationBuilder.GetRotationMatrix4x4(Axes.X, 30);
+////// TODO check correcntess of multiple transform
+////TransformationMatrix4x4 rotateLeft = transformationBuilder.GetRotationMatrix4x4(Axes.Y, 30);
+////TransformationMatrix4x4 rotateUp = transformationBuilder.GetRotationMatrix4x4(Axes.X, 30);
 
-TransformationMatrix4x4 rotateLeftThenUp= rotateUp.Multiply(rotateLeft);
+////TransformationMatrix4x4 rotateLeftThenUp= rotateUp.Multiply(rotateLeft);
 
-foreach (var triangle in triangleHeaven.Figures)
-{
-    triangle.Transform(rotateLeft);
-}
+////foreach (var triangle in triangleHeaven.Figures)
+////{
+////    triangle.Transform(rotateLeft);
+////}
 
-//triangleHeaven.Camera.Transform(rotateLeft);
+//////triangleHeaven.Camera.Transform(rotateLeft);
 
-triangleHeaven.Camera.Rotate(Axes.Y, 30);
+////triangleHeaven.Camera.Rotate(Axes.Y, 30);
 
-byte[,] image2 = renderer.Render(vRes, hRes);
+////byte[,] image2 = renderer.Render(vRes, hRes);
 
-bmpWriter.Write(OneColorByteArrayToImage(image2), "C:\\Repos\\ComputerGraphics\\RayCasting\\RayCasting\\image2.bmp");
+////bmpWriter.Write(OneColorByteArrayToImage(image2), "C:\\Repos\\ComputerGraphics\\RayCasting\\RayCasting\\image2.bmp");
 
-foreach (var triangle in triangleHeaven.Figures)
-{
-    triangle.Transform(rotateUp);
-}
+////foreach (var triangle in triangleHeaven.Figures)
+////{
+////    triangle.Transform(rotateUp);
+////}
 
-byte[,] image3 = renderer.Render(vRes, hRes);
+////byte[,] image3 = renderer.Render(vRes, hRes);
 
-bmpWriter.Write(OneColorByteArrayToImage(image2), "C:\\Repos\\ComputerGraphics\\RayCasting\\RayCasting\\image3.bmp");
+////bmpWriter.Write(OneColorByteArrayToImage(image2), "C:\\Repos\\ComputerGraphics\\RayCasting\\RayCasting\\image3.bmp");
 
 ////writer.WriteNeglectingLight(image);
 
@@ -158,12 +179,16 @@ bmpWriter.Write(OneColorByteArrayToImage(image2), "C:\\Repos\\ComputerGraphics\\
 
 Image OneColorByteArrayToImage(byte[,] image)
 {
-    class Program
+    int height = image.GetLength(0);
+    int width = image.GetLength(1);
+    Pixel[,] pixels = new Pixel[height, width];
+    for (int i = 0; i < height; i++)
     {
-        static void Main(string[] args)
+        for (int j = 0; j < width; j++)
         {
-            ObjReader reader = new ObjReader();
-            
+            byte color = image[i, j];
+            pixels[i, j] = new Pixel(color, color, color);
         }
     }
+    return new Image(pixels);
 }

@@ -6,15 +6,15 @@ namespace RayCasting
 {
     internal class ObjReader
     {
-        public ObjReader() { Reader(); }
-
-        private void Reader()
+        public Triangle[] Read()
         {
             int countV = 0, countF = 0;
             string[] splitLine;
             //if (File.Exists("C:\\Users\\arikt\\Documents\\Programming\\ComputerGraphics\\RayCasting\\RayCasting\\cow.obj"))
             //{
-            string[] lines = File.ReadAllLines("C:\\Users\\arikt\\Documents\\Programming\\ComputerGraphics\\RayCasting\\RayCasting\\cow.obj");
+            string[] lines = File.ReadAllLines("C:\\Repos\\ComputerGraphics\\RayCasting\\RayCasting\\cow.obj");
+
+            //string[] lines = File.ReadAllLines("C:\\Users\\arikt\\Documents\\Programming\\ComputerGraphics\\RayCasting\\RayCasting\\cow.obj");
             foreach (var line in lines)
             {
                 if (line.StartsWith("v "))
@@ -64,6 +64,8 @@ namespace RayCasting
                     k++;
                 }
             }
+
+            return triangles;
         }
     }
 }
