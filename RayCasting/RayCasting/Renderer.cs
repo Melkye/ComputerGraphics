@@ -26,7 +26,7 @@ public class Renderer
         float verticalAngleBetweenTwoPixels = vFov / (height - 1) * (float)(Math.PI / 180);
         float horizontalAngleBetweenTwoPixels = hFov / (width - 1) * (float)(Math.PI / 180);
 
-        Vector3D cameraDirectionForward = Scene.Camera.Direction;
+        Vector3D cameraDirectionForward = Scene.Camera.ForwardDirection;
         Vector3D cameraDirectionUp = Scene.Camera.UpDirection;
         Vector3D cameraDirectionRight = Scene.Camera.RightDirection;
 
