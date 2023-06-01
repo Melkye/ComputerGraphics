@@ -1,13 +1,17 @@
-﻿namespace ImageConverter.Ppm;
+using ImageConverter.Common.Interfaces;
+using ImageConverter.Common.Structures;
+
+namespace Writer.Ppm;
 
 public class PpmImageWriter : IImageWriter
 {
-    private const string fileFormatNumber = "P3";
+    private const string FileFormatNumber = "P3";
+    private const string FileFormat = "ppm";
     public void Write(Image image, string destination)
     {
-        using (StreamWriter streamWriter = new StreamWriter(destination))
+        using (StreamWriter streamWriter = new(destination))
         {
-            streamWriter.Write(fileFormatNumber.ToString() + "\n");
+            streamWriter.Write(FileFormatNumber.ToString() + "\n");
             streamWriter.Write(image.Width.ToString() + " ");
             streamWriter.Write(image.Height.ToString() + "\n");
             streamWriter.Write(image.ColorMaxValue.ToString() + "\n");
@@ -22,5 +26,10 @@ public class PpmImageWriter : IImageWriter
                 streamWriter.Write("\n");
             }
         }
+    }
+
+    public bool CanWrite(string format)
+    {
+        return format == FileFormat;
     }
 }
