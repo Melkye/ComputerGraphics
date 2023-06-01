@@ -98,6 +98,7 @@ namespace ReadATextFile
         static void Main(string[] args)
         {
             ObjReader reader = new ObjReader();
+            
         }
     }
 }
