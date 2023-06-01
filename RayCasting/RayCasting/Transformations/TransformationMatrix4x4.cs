@@ -64,14 +64,14 @@ public class TransformationMatrix4x4
 
     public Vector3D Multiply(Vector3D vector)
     {
-        float[] vector4D = new float[] { vector.X, vector.Y, vector.X, 1 };
+        float[] vector4D = new float[] { vector.X, vector.Y, vector.Z, 1 };
 
         float[] resultVector4D = new float[]
         {
             this[0, 0]*vector4D[0] + this[0, 1]*vector4D[1] + this[0, 2]*vector4D[2] + this[0, 3]*vector4D[3],
-            this[0, 0]*vector4D[0] + this[0, 1]*vector4D[1] + this[0, 2]*vector4D[2] + this[0, 3]*vector4D[3],
-            this[0, 0]*vector4D[0] + this[0, 1]*vector4D[1] + this[0, 2]*vector4D[2] + this[0, 3]*vector4D[3],
-            this[0, 0]*vector4D[0] + this[0, 1]*vector4D[1] + this[0, 2]*vector4D[2] + this[0, 3]*vector4D[3]
+            this[1, 0]*vector4D[0] + this[1, 1]*vector4D[1] + this[1, 2]*vector4D[2] + this[1, 3]*vector4D[3],
+            this[2, 0]*vector4D[0] + this[2, 1]*vector4D[1] + this[2, 2]*vector4D[2] + this[2, 3]*vector4D[3],
+            this[2, 0]*vector4D[0] + this[3, 1]*vector4D[1] + this[3, 2]*vector4D[2] + this[3, 3]*vector4D[3]
         };
 
         Vector3D resultVector3D = new(resultVector4D[0], resultVector4D[1], resultVector4D[2]);
@@ -81,14 +81,14 @@ public class TransformationMatrix4x4
 
     public Point3D Multiply(Point3D point)
     {
-        float[] point4D = new float[] { point.X, point.Y, point.X, 1 };
+        float[] point4D = new float[] { point.X, point.Y, point.Z, 1 };
 
         float[] resultPoint4D = new float[]
         {
             this[0, 0]*point4D[0] + this[0, 1]*point4D[1] + this[0, 2]*point4D[2] + this[0, 3]*point4D[3],
-            this[0, 0]*point4D[0] + this[0, 1]*point4D[1] + this[0, 2]*point4D[2] + this[0, 3]*point4D[3],
-            this[0, 0]*point4D[0] + this[0, 1]*point4D[1] + this[0, 2]*point4D[2] + this[0, 3]*point4D[3],
-            this[0, 0]*point4D[0] + this[0, 1]*point4D[1] + this[0, 2]*point4D[2] + this[0, 3]*point4D[3]
+            this[1, 0]*point4D[0] + this[1, 1]*point4D[1] + this[1, 2]*point4D[2] + this[1, 3]*point4D[3],
+            this[2, 0]*point4D[0] + this[2, 1]*point4D[1] + this[2, 2]*point4D[2] + this[2, 3]*point4D[3],
+            this[3, 0]*point4D[0] + this[3, 1]*point4D[1] + this[3, 2]*point4D[2] + this[3, 3]*point4D[3]
         };
 
         Point3D resultPoint3D = new(resultPoint4D[0], resultPoint4D[1], resultPoint4D[2]);
