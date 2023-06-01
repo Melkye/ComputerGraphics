@@ -1,22 +1,24 @@
-﻿//using RayCasting;
-//using RayCasting.Objects;
-//using RayCasting.Lighting;
-//using RayCasting.Figures;
-//using RayCasting.Cameras;
-//using RayCasting.Scenes;
-//using RayCasting.Casters;
-//using RayCasting.Writers;
-//using ImageConverter;
+﻿using RayCasting;
+using RayCasting.Objects;
+using RayCasting.Lighting;
+using RayCasting.Figures;
+using RayCasting.Cameras;
+using RayCasting.Scenes;
+using RayCasting.Casters;
+using RayCasting.Writers;
+using ImageConverter;
+using ImageConverter.Bmp;
+using RayCasting.Transformations;
 
-//Point3D coordOrigin = new(0, 0, -1);
-//Vector3D negativeZDirection = new(0, 0, -1);
-//Vector3D positiveYDirection = new(0, 1, 0);
-//float vFov = 120;
+Point3D coordOrigin = new(0, 0, 0);
+Vector3D negativeZDirection = new(0, 0, -1);
+Vector3D positiveYDirection = new(0, 1, 0);
+float hFov = 90;
 
-//int vRes = 1080;
-//int hRes = 1920;
+int vRes = 500;
+int hRes = 500;
 
-//Camera cam1 = new(coordOrigin, negativeZDirection, positiveYDirection, vFov);
+Camera cam1 = new(coordOrigin, negativeZDirection, positiveYDirection, hFov);
 
 //Sphere sphere1 = new(new(0, 0, -7), 1f);
 //Sphere sphere2 = new(new(0.8f, 1, -5), 0.5f);
@@ -60,10 +62,94 @@
 
 //byte[,] image = renderer.Render(vRes, hRes);
 
-//ConsoleWriter writer = new();
-//ImageConverter.Bmp.BmpImageWriter bmpWriter = new();
+// base image
+float coordZ = -10;
 
-//bmpWriter.Write(OneColorByteArrayToImage(image), "C:\\Repos\\ComputerGraphics\\RayCasting\\RayCasting\\image.bmp");
+Scene triangleHeaven = new(cam1, downsideLight,
+    new IIntersectable[]
+    {
+        new Triangle(new(-5f, 4f, coordZ), new(-4f, 6f, coordZ), new(-3f,4f, coordZ)),
+        new Triangle(new(-3f, 4f, coordZ), new(-2f, 6f, coordZ), new(-1f, 4f, coordZ)),
+        new Triangle(new(-1f, 4f, coordZ), new(0f, 6f, coordZ), new(1f, 4f, coordZ)),
+        new Triangle(new(1f, 4f, coordZ), new(2f, 6f, coordZ), new(3f, 4f, coordZ)),
+        new Triangle(new(3f, 4f, coordZ), new(4f, 6f, coordZ), new(5f, 4f, coordZ)),
+
+        new Triangle(new(-5f, 2f, coordZ), new(-4f, 4f, coordZ), new(-3f, 2f, coordZ)),
+        new Triangle(new(-3f, 2f, coordZ), new(-2f, 4f, coordZ), new(-1f, 2f, coordZ)),
+        new Triangle(new(-1f, 2f, coordZ), new(0f, 4f, coordZ), new(1f, 2f, coordZ)),
+        new Triangle(new(1f, 2f, coordZ), new(2f, 4f, coordZ), new(3f, 2f, coordZ)),
+        new Triangle(new(3f, 2f, coordZ), new(4f, 4f, coordZ), new(5f, 2f, coordZ)),
+
+        new Triangle(new(-5f, 0f, coordZ), new(-4f, 2f, coordZ), new(-3f, 0f, coordZ)),
+        new Triangle(new(-3f, 0f, coordZ), new(-2f, 2f, coordZ), new(-1f, 0f, coordZ)),
+        new Triangle(new(-1f, 0f, coordZ), new(0f, 2f, coordZ), new(1f, 0f, coordZ)),
+        new Triangle(new(1f, 0f, coordZ), new(2f, 2f, coordZ), new(3f, 0f, coordZ)),
+        new Triangle(new(3f, 0f, coordZ), new(4f, 2f, coordZ), new(5f, 0f, coordZ)),
+
+        new Triangle(new(-5f, -2f, coordZ), new(-4f, 0f, coordZ), new(-3f, -2f, coordZ)),
+        new Triangle(new(-3f, -2f, coordZ), new(-2f, 0f, coordZ), new(-1f, -2f, coordZ)),
+        new Triangle(new(-1f, -2f, coordZ), new(0f, 0f, coordZ), new(1f, -2f, coordZ)),
+        new Triangle(new(1f, -2f, coordZ), new(2f, 0f, coordZ), new(3f, -2f, coordZ)),
+        new Triangle(new(3f, -2f, coordZ), new(4f, 0f, coordZ), new(5f, -2f, coordZ)),
+
+        new Triangle(new(-5f, -4f, coordZ), new(-4f, -2f, coordZ), new(-3f, -4f, coordZ)),
+        new Triangle(new(-3f, -4f, coordZ), new(-2f, -2f, coordZ), new(-1f, -4f, coordZ)),
+        new Triangle(new(-1f, -4f, coordZ), new(0f, -2f, coordZ), new(1f, -4f, coordZ)),
+        new Triangle(new(1f, -4f, coordZ), new(2f, -2f, coordZ), new(3f, -4f, coordZ)),
+        new Triangle(new(3f, -4f, coordZ), new(4f, -2f, coordZ), new(5f, -4f, coordZ)),
+    });
+
+Renderer renderer = new(triangleHeaven, new LightNeglectingCaster());
+
+byte[,] image = renderer.Render(vRes, hRes);
+
+//ConsoleWriter writer = new();
+BmpImageWriter bmpWriter = new();
+
+//Console.WriteLine("----------------------------------------------------");
+
+
+//// move left by -2
+//var transformationBuilder = new TransformationMatrixBuilder();
+
+//TransformationMatrix4x4 moveLeft = transformationBuilder.GetTranslationMatrix4x4(Axes.X, -2f);
+
+//foreach (var triangle in triangleHeaven.Figures)
+//{
+//    triangle.Transform(moveLeft);
+//}
+
+// rotate left by 45 degrees
+var transformationBuilder = new TransformationMatrixBuilder();
+
+
+// TODO check correcntess of multiple transform
+TransformationMatrix4x4 rotateLeft = transformationBuilder.GetRotationMatrix4x4(Axes.Y, 30);
+TransformationMatrix4x4 rotateUp = transformationBuilder.GetRotationMatrix4x4(Axes.X, 30);
+
+TransformationMatrix4x4 rotateLeftThenUp= rotateUp.Multiply(rotateLeft);
+
+foreach (var triangle in triangleHeaven.Figures)
+{
+    triangle.Transform(rotateLeft);
+}
+
+//triangleHeaven.Camera.Transform(rotateLeft);
+
+triangleHeaven.Camera.Rotate(Axes.Y, 30);
+
+byte[,] image2 = renderer.Render(vRes, hRes);
+
+bmpWriter.Write(OneColorByteArrayToImage(image2), "C:\\Repos\\ComputerGraphics\\RayCasting\\RayCasting\\image2.bmp");
+
+foreach (var triangle in triangleHeaven.Figures)
+{
+    triangle.Transform(rotateUp);
+}
+
+byte[,] image3 = renderer.Render(vRes, hRes);
+
+bmpWriter.Write(OneColorByteArrayToImage(image2), "C:\\Repos\\ComputerGraphics\\RayCasting\\RayCasting\\image3.bmp");
 
 ////writer.WriteNeglectingLight(image);
 
@@ -72,23 +158,6 @@
 ////writer.Write(image2);
 //Console.WriteLine("----------------------------------------------------");
 ////writer.Write(image3);
-
-//Image OneColorByteArrayToImage(byte[,] image)
-//{
-//    int height = image.GetLength(0);
-//    int width = image.GetLength(1);
-//    Pixel[,] pixels = new Pixel[height, width];
-//    for (int i = 0; i < height; i++)
-//    {
-//        for (int j = 0; j < width; j++)
-//        {
-//            byte color = image[i, j];
-//            pixels[i, j] = new Pixel(color, color, color);
-//        }
-//    }
-//    return new Image(pixels);
-//}
-
 using RayCasting;
 
 namespace ReadATextFile

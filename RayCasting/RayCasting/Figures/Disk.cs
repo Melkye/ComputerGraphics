@@ -1,4 +1,5 @@
 ﻿using RayCasting.Objects;
+using RayCasting.Transformations;
 using System.Numerics;
 
 namespace RayCasting.Figures;
@@ -36,5 +37,11 @@ public class Disk : IIntersectable
     public Vector3D GetNormalVector(Point3D point)
     {
         return NormalVector;
+    }
+
+    public void Transform(TransformationMatrix4x4 transformation)
+    { 
+        // TODO: implement
+        throw new NotImplementedException();
     }
 }
