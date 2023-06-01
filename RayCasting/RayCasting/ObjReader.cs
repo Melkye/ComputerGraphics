@@ -1,69 +1,63 @@
 ﻿using RayCasting.Figures;
 using RayCasting.Objects;
 using System.Globalization;
-
+// TODO: check file exists
 namespace RayCasting
 {
     internal class ObjReader
     {
+        const string imagePath = "C:\\Users\\arikt\\Documents\\Programming\\ComputerGraphics\\RayCasting\\RayCasting\\cow.obj";
         public ObjReader() { Reader(); }
 
         private void Reader()
         {
             int countV = 0, countF = 0;
+            string[] fileLines;
             string[] splitLine;
-            //if (File.Exists("C:\\Users\\arikt\\Documents\\Programming\\ComputerGraphics\\RayCasting\\RayCasting\\cow.obj"))
-            //{
-            string[] lines = File.ReadAllLines("C:\\Users\\arikt\\Documents\\Programming\\ComputerGraphics\\RayCasting\\RayCasting\\cow.obj");
-            foreach (var line in lines)
-            {
-                if (line.StartsWith("v "))
-                {
-                    countV++;
-                }
-                if (line.StartsWith("f "))
-                {
-                    countF++;
-                }
-            }
-            Point3D[] points = new Point3D[countV];
-            Triangle[] triangles = new Triangle[countF];
-            int i = 0, k = 0;
-            foreach (var line in lines)
+            List<string> indexes = new List<string>();
+            List<Point3D> points = new List<Point3D>();
+            List<Triangle> triangles = new List<Triangle>();
+
+            fileLines = File.ReadAllLines(imagePath);
+
+            foreach (var line in fileLines)
             {
                 if (line.StartsWith("v "))
                 {
                     splitLine = line.Split();
-                    float test1, test2, test3;
-                    test1 = float.Parse(splitLine[1], CultureInfo.InvariantCulture.NumberFormat);
-                    test2 = float.Parse(splitLine[2], CultureInfo.InvariantCulture.NumberFormat);
-                    test3 = float.Parse(splitLine[3], CultureInfo.InvariantCulture.NumberFormat);
-                    points[i] = new(test1, test2, test3);
-                    i++;
+                    points.Add(new Point3D(ToFloat(splitLine[1]),
+                            ToFloat(splitLine[2]),
+                            ToFloat(splitLine[3])));
                 }
                 if (line.StartsWith("f "))
                 {
-                    List<string> coordinates = new List<string>();
-
-                    splitLine = line.Split();
-
-                    foreach (var coordString in splitLine)
+                    foreach (var index in line.Split())
                     {
-                        if (coordString != "f")
+                        if (index != "f")
                         {
-                            string[] coordArr = coordString.Split("//");
-                            string firstCoord = coordArr.First();
-                            coordinates.Add(firstCoord);
+                            indexes.Add(index.Split("//").First());
                         }
                     }
-                    string[] coordinatesArr = coordinates.ToArray();
 
-                    triangles[k] = new(points[int.Parse(coordinatesArr[0]) - 1],
-                        points[int.Parse(coordinatesArr[1]) - 1],
-                        points[int.Parse(coordinatesArr[2]) - 1]);
-                    k++;
+                    triangles.Add(new Triangle
+                        (points.ElementAt(ToInt(indexes.ElementAt(0)) - 1),
+                        points.ElementAt(ToInt(indexes.ElementAt(1)) - 1),
+                        points.ElementAt(ToInt(indexes.ElementAt(2)) - 1)
+                        ));
+
+                    indexes.Clear();
                 }
             }
+        }
+
+        private float ToFloat(string line)
+        {
+            return float.Parse(line, CultureInfo.InvariantCulture.NumberFormat);
+        }
+
+        private int ToInt(string line)
+        {
+            return Int32.Parse(line);
         }
     }
 }
