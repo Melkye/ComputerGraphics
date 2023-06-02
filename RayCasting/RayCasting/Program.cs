@@ -159,6 +159,8 @@
 //Console.WriteLine("----------------------------------------------------");
 ////writer.Write(image3);
 using RayCasting;
+using System.Diagnostics;
+using System.IO;
 
 namespace ReadATextFile
 {
@@ -167,7 +169,8 @@ namespace ReadATextFile
         static void Main(string[] args)
         {
             ObjReader reader = new ObjReader();
-            
+
+            reader.ReadTriangles();
         }
     }
 }

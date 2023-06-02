@@ -1,17 +1,18 @@
 ﻿using RayCasting.Figures;
 using RayCasting.Objects;
 using System.Globalization;
+using System.IO;
 // TODO: check file exists
 namespace RayCasting
 {
     internal class ObjReader
     {
-        const string imagePath = "C:\\Users\\arikt\\Documents\\Programming\\ComputerGraphics\\RayCasting\\RayCasting\\cow.obj";
-        public ObjReader() { Reader(); }
+        string imagePath = Path.Combine(Environment.CurrentDirectory, @"..\..\..\Images\cow.obj");
 
-        private void Reader()
+        public ObjReader() { }
+
+        public Triangle[] ReadTriangles()
         {
-            int countV = 0, countF = 0;
             string[] fileLines;
             string[] splitLine;
             List<string> indexes = new List<string>();
@@ -48,6 +49,7 @@ namespace RayCasting
                     indexes.Clear();
                 }
             }
+            return triangles.ToArray();
         }
 
         private float ToFloat(string line)
