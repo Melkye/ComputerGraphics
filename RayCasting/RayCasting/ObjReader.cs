@@ -1,17 +1,14 @@
 ﻿using RayCasting.Figures;
 using RayCasting.Objects;
 using System.Globalization;
-using System.IO;
-// TODO: check file exists
+
 namespace RayCasting
 {
     internal class ObjReader
     {
-        string imagePath = Path.Combine(Environment.CurrentDirectory, @"..\..\..\Images\cow.obj");
-
         public ObjReader() { }
 
-        public Triangle[] ReadTriangles()
+        public Triangle[] ReadTriangles(string source)
         {
             string[] fileLines;
             string[] splitLine;
@@ -19,7 +16,7 @@ namespace RayCasting
             List<Point3D> points = new List<Point3D>();
             List<Triangle> triangles = new List<Triangle>();
 
-            fileLines = File.ReadAllLines(imagePath);
+            fileLines = File.ReadAllLines(source);
 
             foreach (var line in fileLines)
             {
