@@ -1,11 +1,13 @@
-﻿using ImageConverter;
-using System.Text;
+﻿using System.Text;
 
 namespace RayCasting
 {
     internal class CommandLineArguments
     {
-        public CommandLineArguments(string[] args)
+        public CommandLineArguments()
+        { }
+
+        public (string, string) ParserArgs(string[] args)
         {
             string source = "";
             string destination = "";
@@ -54,23 +56,12 @@ namespace RayCasting
                 }
             }
 
-            if (!string.IsNullOrEmpty(destination))
-            {
-                string destinationFormat = new FormatReader().GetFileFormat(source);
-
-                if (Path.GetExtension(destination) != ".ppm")
-                {
-                    errorsOccured += 1;
-                    //exceptionMessage.Append(errorsOccured + $" you try to convert to the same format: {sourceFormat} to {goalFormat} \n");
-                }
-            }
-
             if (errorsOccured > 0)
             {
                 throw new ArgumentException(exceptionMessage.ToString());
             }
 
-            //return (source, destination);
+            return (source, destination);
         }
     }
 }

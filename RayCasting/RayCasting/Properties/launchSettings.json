@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "RayCasting": {
+      "commandName": "Project",
+      "commandLineArgs": "--source=cow.obj --destination=cow.bmp"
+    }
+  }
+}
