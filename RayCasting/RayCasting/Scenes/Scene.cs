@@ -13,7 +13,8 @@ public class Scene
     }
     public ICamera Camera { get; }
 
-    public ILightSource LightSource { get; }
+    // TODO remove public setter 
+    public ILightSource LightSource { get; set; }
 
     public IIntersectable[] Figures { get; }
 }

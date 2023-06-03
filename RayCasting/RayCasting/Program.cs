@@ -1,48 +1,12 @@
 using ImageConverter;
 using ImageConverter.Bmp;
+using RayCasting;
+using RayCasting.Cameras;
+using RayCasting.Casters;
+using RayCasting.Lighting;
+using RayCasting.Objects;
+using RayCasting.Scenes;
 using RayCasting.Transformations;
-
-Point3D coordOrigin = new(0, 0, 0);
-Vector3D negativeZDirection = new(0, 0, -1);
-Vector3D positiveYDirection = new(0, 1, 0);
-float hFov = 90;
-
-int vRes = 400;
-int hRes = 400;
-
-Camera cam1 = new(new(0, 0, 1), new(0, 0, -1), new(0, 1, 0), hFov);
-
-// TODO: fiz lighting issue: need to invert direction for cow
-DirectedLightSource lightFromCam1 = new(new(100, 100, 100), -cam1.ForwardDirection);
-DirectedLightSource lightFromCam1LeftDiag = new(new(100, 100, 100), -new Vector3D(-1, 0, -5));
-
-//DirectedLightSource downsideLight = new(new(), new(0, -1, 0));
-
-DirectedLightSource lightFromLeftToRightX = new(new(-10, 0, 0), new(1, 0, 0));
-
-
-// cow
-
-var cowTriangles = new ObjReader().Read();
-Scene cowScene = new(cam1, lightFromCam1LeftDiag, cowTriangles);
-//Renderer rendererWithoutLight = new(cowScene, new LightNeglectingCaster());
-Renderer rendererWithoutShadows = new(cowScene, new LightConsideringCaster());
-//Renderer rendererWithShadows = new(cowScene, new LightAndShadowConsideringCaster());
-
-var transformationsBuilder = new TransformationMatrixBuilder();
-var cowTransform = transformationsBuilder.Rotate(Axes.X, -90).ThenRotate(Axes.Y, 30);
-
-foreach (var triangle in cowTriangles)
-{
-    triangle.Transform(cowTransform);
-}
-
-//var camTransform = transformationsBuilder.Translate(Axes.X, -2).ThenTranslate()
-//cam1.Rotate()
-
-//byte[,] image1 = rendererWithoutLight.Render(vRes, hRes);
-byte[,] image2 = rendererWithoutShadows.Render(vRes, hRes);
-//byte[,] image3 = rendererWithShadows.Render(vRes, hRes);
 
 internal class Program
 {
@@ -59,10 +23,64 @@ internal class Program
             Console.WriteLine(e.Message);
             Console.ForegroundColor = ConsoleColor.White;
         }
+
+
         try
         {
+            Point3D coordOrigin = new(0, 0, 0);
+            Vector3D negativeZDirection = new(0, 0, -1);
+            Vector3D positiveYDirection = new(0, 1, 0);
+            float hFov = 90;
+
+            int vRes = 50;
+            int hRes = 50;
+
+            Camera cam1 = new(new(0, 0, 0), new(0, 0, -1), new(0, 1, 0), hFov);
+
+            // TODO: fiz lighting issue: need to invert direction for cow
+            DirectedLightSource lightFromCam1 = new(new(100, 100, 100), -cam1.ForwardDirection);
+            //DirectedLightSource lightFromCam1LeftDiag = new(new(100, 100, 100), -new Vector3D(-1, 0, -5));
+
+            //DirectedLightSource downsideLight = new(new(), new(0, -1, 0));
+
+            DirectedLightSource lightFromLeftToRightX = new(new(-10, 0, 0), new(1, 0, 0));
+
+
+            // cow
+
+            var cowTriangles = new ObjReader().ReadTriangles(source);
+            Scene cowScene = new(cam1, lightFromCam1, cowTriangles);
+            //Renderer rendererWithoutLight = new(cowScene, new LightNeglectingCaster());
+            Renderer rendererWithoutShadows = new(cowScene, new LightConsideringCaster());
+            //Renderer rendererWithShadows = new(cowScene, new LightAndShadowConsideringCaster());
+
+            var transformationsBuilder = new TransformationMatrixBuilder();
+            var cowTransform = transformationsBuilder
+                .Translate(Axes.Z, -1)
+                .ThenRotate(Axes.X, -90)
+                .ThenRotate(Axes.Y, 90)
+                .ThenRotate(Axes.Z, 90);
+
+            foreach (var triangle in cowTriangles)
+            {
+                triangle.Transform(cowTransform);
+            }
+
+            cam1.Rotate(Axes.X, -90);
+            cam1.Rotate(Axes.Y, 90);
+            //cam1.Rotate(Axes.Z, 90);
+            cowScene.LightSource = new DirectedLightSource(cam1.Position, -cam1.ForwardDirection);
+
+            //var camTransform = transformationsBuilder.Translate(Axes.X, -2).ThenTranslate()
+            //cam1.Rotate()
+
+            //byte[,] image1 = rendererWithoutLight.Render(vRes, hRes);
+            byte[,] image2 = rendererWithoutShadows.Render(vRes, hRes);
+            //byte[,] image3 = rendererWithShadows.Render(vRes, hRes);
+
+
             BmpImageWriter bmpWriter = new();
-            bmpWriter.Write(new MonochromeImageCreator().OneColorByteArrayToImage(image2), "C:\\Repos\\ComputerGraphics\\RayCasting\\RayCasting\\niceCowImage.bmp");
+            bmpWriter.Write(new MonochromeImageCreator().OneColorByteArrayToImage(image2), destination);
         }
         catch (Exception e)
         {
