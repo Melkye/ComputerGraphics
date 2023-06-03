@@ -26,15 +26,17 @@ public class Camera : ICamera
     //}
     public void Rotate(TransformationMatrix4x4 rotation)
     {
-        throw new NotImplementedException();
+        ForwardDirection = rotation.Multiply(ForwardDirection);
+        UpDirection = rotation.Multiply(UpDirection);
     }
 
     public void Rotate(Axes axis, float angleInDegrees)
     {
-        TransformationMatrixBuilder transfotmationBuilder = new();
-        // decide how to use this and consider forward/upward direction
-        TransformationMatrix4x4 rotation = transfotmationBuilder.GetRotationMatrix4x4(axis, angleInDegrees);
+        TransformationMatrixBuilder transformationBuilder = new();
+        // TODO decide how to use this and consider forward/upward direction
+        TransformationMatrix4x4 rotation = transformationBuilder.Rotate(axis, angleInDegrees);
 
+        // TODO guess don't need this
         switch (axis)
         {
             case Axes.X:
@@ -52,17 +54,20 @@ public class Camera : ICamera
         UpDirection = rotation.Multiply(UpDirection);
     }
 
-    public void Translate(TransformationMatrix4x4 move)
+    public void Translate(TransformationMatrix4x4 translation)
     {
-        throw new NotImplementedException();
+
+        Position = translation.Multiply(Position);
+
     }
 
     public void Translate(Axes axis, float shift)
     {
-        TransformationMatrixBuilder transfotmationBuilder = new();
-        // decide how to use this and consider forward/upward direction
-        TransformationMatrix4x4 translation = transfotmationBuilder.GetTranslationMatrix4x4(axis, shift);
+        TransformationMatrixBuilder transformationBuilder = new();
+        // TODO decide how to use this and consider forward/upward direction
+        TransformationMatrix4x4 translation = transformationBuilder.Translate(axis, shift);
 
+        // TODO guess don't need this
         switch (axis)
         {
             case Axes.X:
@@ -76,8 +81,10 @@ public class Camera : ICamera
                 break;
         }
 
-        ForwardDirection = translation.Multiply(ForwardDirection);
-        UpDirection = translation.Multiply(UpDirection);
+        //ForwardDirection = translation.Multiply(ForwardDirection);
+        //UpDirection = translation.Multiply(UpDirection);
+
+        Position = translation.Multiply(Position);
     }
 
     public float FieldOfView { get; }
