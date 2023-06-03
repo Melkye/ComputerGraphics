@@ -1,15 +1,6 @@
-using RayCasting;
-using RayCasting.Objects;
-using RayCasting.Lighting;
-using RayCasting.Figures;
-using RayCasting.Cameras;
-using RayCasting.Scenes;
-using RayCasting.Casters;
-using RayCasting.Writers;
 using ImageConverter;
 using ImageConverter.Bmp;
 using RayCasting.Transformations;
-using static System.Net.Mime.MediaTypeNames;
 
 Point3D coordOrigin = new(0, 0, 0);
 Vector3D negativeZDirection = new(0, 0, -1);
@@ -53,11 +44,35 @@ foreach (var triangle in cowTriangles)
 byte[,] image2 = rendererWithoutShadows.Render(vRes, hRes);
 //byte[,] image3 = rendererWithShadows.Render(vRes, hRes);
 
+internal class Program
+{
+    private static void Main(string[] args)
+    {
+        (string source, string destination) = ("", "");
+        try
+        {
+            (source, destination) = new CommandLineArguments().ParserArgs(args);
+        }
+        catch (ArgumentException e)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(e.Message);
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+        try
+        {
+            BmpImageWriter bmpWriter = new();
+            bmpWriter.Write(new MonochromeImageCreator().OneColorByteArrayToImage(image2), "C:\\Repos\\ComputerGraphics\\RayCasting\\RayCasting\\niceCowImage.bmp");
+        }
+        catch (Exception e)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(e.Message);
+            Console.ForegroundColor = ConsoleColor.White;
 
-BmpImageWriter bmpWriter = new();
-
-bmpWriter.Write(new MonochromeImageCreator().OneColorByteArrayToImage(image2), "C:\\Repos\\ComputerGraphics\\RayCasting\\RayCasting\\niceCowImage.bmp");
-
+        }
+    }
+}
 
 //bmpWriter.Write(new MonochromeImageCreator().OneColorByteArrayToImage(image1), "C:\\Repos\\ComputerGraphics\\RayCasting\\RayCasting\\cowImage1.bmp");
 //bmpWriter.Write(new MonochromeImageCreator().OneColorByteArrayToImage(image2), "C:\\Repos\\ComputerGraphics\\RayCasting\\RayCasting\\cowImage2.bmp");
