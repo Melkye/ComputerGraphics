@@ -20,7 +20,8 @@ int hRes = 50;
 
 Camera cam1 = new(new(0, 0, 1), new(0, 0, -1), new(0, 1, 0), hFov);
 
-DirectedLightSource lightFromCam1 = new(cam1.Position, cam1.ForwardDirection);
+// TODO: fiz lighting issue: need to invert direction for cow
+DirectedLightSource lightFromCam1 = new(cam1.Position, -cam1.ForwardDirection);
 //DirectedLightSource downsideLight = new(new(), new(0, -1, 0));
 
 // cow
