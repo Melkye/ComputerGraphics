@@ -4,28 +4,6 @@ namespace RayCasting.Transformations;
 
 public class TransformationMatrixBuilder
 {
-    public TransformationMatrix4x4 GetRotationMatrix4x4(Axes axis, float angleInDegrees)
-    {
-        Vector3D axisVector = new();
-
-        switch (axis)
-        {
-            case Axes.X:
-                axisVector = new Vector3D(1, 0, 0);
-                break;
-            case Axes.Y:
-                axisVector = new Vector3D(0, 1, 0);
-                break;
-            case Axes.Z:
-                axisVector = new Vector3D(0, 0, 1);
-                break;
-        }
-
-        TransformationMatrix4x4 matrix = GetRotationMatrix4x4(axisVector, angleInDegrees);
-
-        return matrix;
-    }
-
     //For column vectors, each of these basic vector rotations appears
     //counterclockwise when the axis about which they occur points toward
     //the observer, the coordinate system is right-handed, and the
@@ -78,33 +56,6 @@ public class TransformationMatrixBuilder
         return matrix;
     }
 
-    public TransformationMatrix4x4 GetTranslationMatrix4x4(float shift)
-    {
-        return GetTranslationMatrix4x4(shift, shift, shift);
-    }
-
-    public TransformationMatrix4x4 GetTranslationMatrix4x4(Axes axis, float shift)
-    {
-        float shiftX = 0;
-        float shiftY = 0;
-        float shiftZ = 0;
-
-        switch (axis)
-        {
-            case Axes.X:
-                shiftX = shift;
-                break;
-            case Axes.Y:
-                shiftY = shift;
-                break;
-            case Axes.Z:
-                shiftZ = shift;
-                break;
-        }
-
-        return GetTranslationMatrix4x4(shiftX, shiftY, shiftZ);
-    }
-
     public TransformationMatrix4x4 GetScaleMatrix4x4(float scaleX, float scaleY, float scaleZ)
     {
         TransformationMatrix4x4 matrix = new(
@@ -117,32 +68,5 @@ public class TransformationMatrixBuilder
         });
 
         return matrix;
-    }
-
-    public TransformationMatrix4x4 GetScaleMatrix4x4(float scale)
-    {
-        return GetTranslationMatrix4x4(scale, scale, scale);
-    }
-
-    public TransformationMatrix4x4 GetScaleMatrix4x4(Axes axis, float scale)
-    {
-        float scaleX = 0;
-        float scaleY = 0;
-        float scaleZ = 0;
-
-        switch (axis)
-        {
-            case Axes.X:
-                scaleX = scale;
-                break;
-            case Axes.Y:
-                scaleY = scale;
-                break;
-            case Axes.Z:
-                scaleZ = scale;
-                break;
-        }
-
-        return GetTranslationMatrix4x4(scaleX, scaleY, scaleZ);
     }
 }
