@@ -28,14 +28,14 @@ public class SceneCreator
         return scene;
     }
 
-    public Scene TriangleHell()
+    public Scene TriangleHell(Camera camera, DirectedLightSource lightSource)
     {
-        Camera camera = new(new(0, 0, 0), new(0, 0, -1), new(1, 0, 0), 90);
-        ILightSource downsideLight = new DirectedLightSource(new(0, 1, 0), new(0, -1, 0));
+        //Camera camera = new(new(0, 0, 0), new(0, 0, -1), new(1, 0, 0), 90);
+        //ILightSource downsideLight = new DirectedLightSource(new(0, 1, 0), new(0, -1, 0));
 
         float coordZ = -10;
 
-        Scene triangleHell = new(camera, downsideLight,
+        Scene triangleHell = new(camera, lightSource,
         new IIntersectable[]
         {
             new Triangle(new(-5f, 4f, coordZ), new(-4f, 6f, coordZ), new(-3f,4f, coordZ)),

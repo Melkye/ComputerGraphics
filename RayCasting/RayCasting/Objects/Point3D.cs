@@ -1,4 +1,6 @@
-﻿namespace RayCasting.Objects;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace RayCasting.Objects;
 public readonly struct Point3D
 {
     public Point3D(float x, float y, float z)
@@ -40,5 +42,21 @@ public readonly struct Point3D
         Point3D movedPoint = point + (-vector);
 
         return movedPoint;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is not Point3D that)
+            return false;
+
+        float precision = 10e-6f;
+
+        var diffX = Math.Abs(X - that.X);
+        var diffY = Math.Abs(Y - that.Y);
+        var diffZ = Math.Abs(Z - that.Z);
+
+        return diffX < precision
+            && diffY < precision
+            && diffZ < precision;
     }
 }
