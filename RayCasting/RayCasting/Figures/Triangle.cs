@@ -56,7 +56,10 @@ public class Triangle : IIntersectable
         //TODO: check if normal is pointed towards light
         Vector3D vecAB = new(vertex0, vertex1);
         Vector3D vecBC = new(vertex1, vertex2);
-        return -vecAB.Cross(vecBC).Normalized();
+
+        // if want to see triangle hell, negate result
+        // i.e. use -vecAB.Cross(vecBC).Normalized();
+        return vecAB.Cross(vecBC).Normalized();
     }
 
     public void Transform(TransformationMatrix4x4 transformation)
