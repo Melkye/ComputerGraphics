@@ -6,7 +6,7 @@ namespace ReadATextFile
     {
         static void Main(string[] args)
         {
-            string source = Path.Combine(Environment.CurrentDirectory, @"..\..\..\Images\cow.obj");
+            string source = Path.Combine(Environment.CurrentDirectory, @"..\..\..\Images\f-16.obj");
 
             ObjReader reader = new ObjReader();
 
