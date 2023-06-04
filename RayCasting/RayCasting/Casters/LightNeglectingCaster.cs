@@ -1,4 +1,5 @@
-﻿using RayCasting.Objects;
+﻿using ImageConverter;
+using RayCasting.Objects;
 using RayCasting.Scenes;
 
 namespace RayCasting.Casters;
@@ -15,10 +16,8 @@ public class LightNeglectingCaster : ICaster
     //        return 0;
     //    return 255;
     //}
-    public byte Cast(Scene scene, (float, float, float) pixelAngles)
+    public Pixel Cast(Scene scene, Vector3D rayDirection)
     {
-        Vector3D rayDirection = new(pixelAngles);
-
         Ray3D ray = new(scene.Camera.Position, rayDirection);
 
         Point3D? intersectionPoint = null;
@@ -29,10 +28,10 @@ public class LightNeglectingCaster : ICaster
             if (intersectionPoint != null)
                 break;
         }
-        
-        if (intersectionPoint == null)
-            return 0;
 
-        return 255;
+        if (intersectionPoint == null)
+            return new Pixel(0, 0, 0);
+
+        return new Pixel(255, 255, 255);
     }
 }
