@@ -1,8 +1,11 @@
+using System.Drawing;
+using System.Runtime.InteropServices;
 using ImageConverter;
 using ImageConverter.Bmp;
 using RayCasting;
 using RayCasting.Cameras;
 using RayCasting.Casters;
+using RayCasting.Figures;
 using RayCasting.Lighting;
 using RayCasting.Objects;
 using RayCasting.Scenes;
@@ -37,50 +40,59 @@ internal class Program
 
             Camera cam1 = new(new(0, 0, 0), new(0, 0, -1), new(0, 1, 0), hFov);
 
-            // TODO: fiz lighting issue: need to invert direction for cow
-            DirectedLightSource lightFromCam1 = new(new(100, 100, 100), -cam1.ForwardDirection);
-            //DirectedLightSource lightFromCam1LeftDiag = new(new(100, 100, 100), -new Vector3D(-1, 0, -5));
+            // TODO: fix lighting issue: need to invert direction for triangle or for cow
+            // at start when setting lighting dir or in caster when calculating brightness
 
-            //DirectedLightSource downsideLight = new(new(), new(0, -1, 0));
-
-            DirectedLightSource lightFromLeftToRightX = new(new(-10, 0, 0), new(1, 0, 0));
-
-
+            PointLighting pointLightingRedOneZeroOne = new(new(255, 0, 0), 1f, new(1, 0, 1));
+            PointLighting pointLightingGreenMinusOneZeroOne = new(new(0, 255, 0), 1f, new(-1, 0, 1));
+            DirectionalLighting blueLightToNegativeZed = new(new(0, 0, 255), 1, new(0, 0, -1));
+            AmbientLighting redSun = new(new(255, 0, 0), 1f);
             // cow
 
             var cowTriangles = new ObjReader().ReadTriangles(source);
-            Scene cowScene = new(cam1, lightFromCam1, cowTriangles);
-            //Renderer rendererWithoutLight = new(cowScene, new LightNeglectingCaster());
-            Renderer rendererWithoutShadows = new(cowScene, new LightConsideringCaster());
-            //Renderer rendererWithShadows = new(cowScene, new LightAndShadowConsideringCaster());
+
+            var cowObjects = new List<IIntersectable>(cowTriangles)
+            {
+                new Sphere(new(0.3f, 0f, -0.5f), 0.05f),
+                new Sphere(new(-0.3f, 0f, -0.5f), 0.05f),
+
+                // background. do not use with ambient light
+                //new Plane(new(0, 0, -100f), -cam1.ForwardDirection)
+            };
+
+            var ligntings = new ILighting[]
+            {
+                //redSun,
+                blueLightToNegativeZed,
+                pointLightingRedOneZeroOne,
+                pointLightingGreenMinusOneZeroOne
+            };
+
+            Scene cowScene = new(
+                cam1,
+                ligntings,
+                cowObjects.ToArray());
+
+            //var triangleHell = new SceneCreator().TriangleHell(cam1, ligntings);
+
+            Renderer rendererWithoutLight = new(cowScene, new LightNeglectingCaster());
+            Renderer rendererWithColors = new(cowScene, new ColorConsideringCaster());
 
             var transformationsBuilder = new TransformationMatrixBuilder();
             var cowTransform = transformationsBuilder
-                .Translate(Axes.Z, -1)
-                .ThenRotate(Axes.X, -90)
-                .ThenRotate(Axes.Y, 90)
-                .ThenRotate(Axes.Z, 90);
+                .Rotate(Axes.X, -90)
+                .ThenTranslate(Axes.Z, -1);
 
             foreach (var triangle in cowTriangles)
             {
                 triangle.Transform(cowTransform);
             }
 
-            cam1.Rotate(Axes.X, -90);
-            cam1.Rotate(Axes.Y, 90);
-            //cam1.Rotate(Axes.Z, 90);
-            cowScene.LightSource = new DirectedLightSource(cam1.Position, -cam1.ForwardDirection);
-
-            //var camTransform = transformationsBuilder.Translate(Axes.X, -2).ThenTranslate()
-            //cam1.Rotate()
-
-            //byte[,] image1 = rendererWithoutLight.Render(vRes, hRes);
-            byte[,] image2 = rendererWithoutShadows.Render(vRes, hRes);
-            //byte[,] image3 = rendererWithShadows.Render(vRes, hRes);
+            Image image = rendererWithColors.Render(vRes, hRes);
 
 
             BmpImageWriter bmpWriter = new();
-            bmpWriter.Write(new MonochromeImageCreator().OneColorByteArrayToImage(image2), destination);
+            bmpWriter.Write(image, destination);
         }
         catch (Exception e)
         {
@@ -91,24 +103,3 @@ internal class Program
         }
     }
 }
-
-//bmpWriter.Write(new MonochromeImageCreator().OneColorByteArrayToImage(image1), "C:\\Repos\\ComputerGraphics\\RayCasting\\RayCasting\\cowImage1.bmp");
-//bmpWriter.Write(new MonochromeImageCreator().OneColorByteArrayToImage(image2), "C:\\Repos\\ComputerGraphics\\RayCasting\\RayCasting\\cowImage2.bmp");
-//bmpWriter.Write(new MonochromeImageCreator().OneColorByteArrayToImage(image3), "C:\\Repos\\ComputerGraphics\\RayCasting\\RayCasting\\cowImage3.bmp");
-
-
-////triangle hell
-//var triangleHell = new SceneCreator().TriangleHell(cam1, lightFromCam1);
-
-//var trianglesTransformation = transformationsBuilder.Translate(3).ThenScale(Axes.X, -1).ThenScale(Axes.Y, -1);
-
-//foreach (var tri in triangleHell.Figures)
-//{
-//    tri.Transform(trianglesTransformation);
-//}
-//Renderer renderer = new(triangleHell, new LightConsideringCaster());
-
-//byte[,] image2 = renderer.Render(vRes, hRes);
-
-//bmpWriter.Write(new MonochromeImageCreator().OneColorByteArrayToImage(image2), "C:\\Repos\\ComputerGraphics\\RayCasting\\RayCasting\\image2.bmp");
-
