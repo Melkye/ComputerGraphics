@@ -33,15 +33,36 @@ namespace RayCasting
                     {
                         if (index != "f")
                         {
-                            indexes.Add(index.Split("//").First());
+                            indexes.Add(index.Split("/").First());
                         }
                     }
 
                     triangles.Add(new Triangle
-                        (points.ElementAt(ToInt(indexes.ElementAt(0)) - 1),
-                        points.ElementAt(ToInt(indexes.ElementAt(1)) - 1),
-                        points.ElementAt(ToInt(indexes.ElementAt(2)) - 1)
-                        ));
+                    (points.ElementAt(ToInt(indexes.ElementAt(0)) - 1),
+                    points.ElementAt(ToInt(indexes.ElementAt(1)) - 1),
+                    points.ElementAt(ToInt(indexes.ElementAt(2)) - 1)));
+
+                    if (indexes.Count > 3)
+                    {
+                        triangles.Add(new Triangle
+                    (points.ElementAt(ToInt(indexes.ElementAt(0)) - 1),
+                    points.ElementAt(ToInt(indexes.ElementAt(2)) - 1),
+                    points.ElementAt(ToInt(indexes.ElementAt(3)) - 1)));
+                    }
+                    if (indexes.Count > 4)
+                    {
+                        triangles.Add(new Triangle
+                    (points.ElementAt(ToInt(indexes.ElementAt(0)) - 1),
+                    points.ElementAt(ToInt(indexes.ElementAt(3)) - 1),
+                    points.ElementAt(ToInt(indexes.ElementAt(4)) - 1)));
+                    }
+                    if (indexes.Count == 6)
+                    {
+                        triangles.Add(new Triangle
+                    (points.ElementAt(ToInt(indexes.ElementAt(0)) - 1),
+                    points.ElementAt(ToInt(indexes.ElementAt(4)) - 1),
+                    points.ElementAt(ToInt(indexes.ElementAt(5)) - 1)));
+                    }
 
                     indexes.Clear();
                 }
