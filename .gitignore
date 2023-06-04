@@ -76,7 +76,7 @@ StyleCopReport.xml
 *.meta
 *.obj
 !cow.obj
-!f16.obj
+!f-16.obj
 *.iobj
 *.pch
 *.pdb

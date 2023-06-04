@@ -2,7 +2,7 @@
   "profiles": {
     "RayCasting": {
       "commandName": "Project",
-      "commandLineArgs": "--source=C:\\Users\\arikt\\Documents\\Programming\\ComputerGraphics\\RayCasting\\RayCasting\\Images\\cow.obj --destination=cow.bmp"
+      "commandLineArgs": "--source=C:\\\\Repos\\\\ComputerGraphics\\\\RayCasting\\\\RayCasting\\\\f-16.obj --destination=C:\\Repos\\ComputerGraphics\\RayCasting\\RayCasting\\f-16.bmp"
     }
   }
 }

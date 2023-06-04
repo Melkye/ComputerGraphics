@@ -1,5 +1,3 @@
-using System.Drawing;
-using System.Runtime.InteropServices;
 using ImageConverter;
 using ImageConverter.Bmp;
 using RayCasting;
@@ -47,20 +45,8 @@ internal class Program
             PointLighting pointLightingGreenMinusOneZeroOne = new(new(0, 255, 0), 1f, new(-1, 0, 1));
             DirectionalLighting blueLightToNegativeZed = new(new(0, 0, 255), 1, new(0, 0, -1));
             AmbientLighting redSun = new(new(255, 0, 0), 1f);
-            // cow
 
-            var cowTriangles = new ObjReader().ReadTriangles(source);
-
-            var cowObjects = new List<IIntersectable>(cowTriangles)
-            {
-                new Sphere(new(0.3f, 0f, -0.5f), 0.05f),
-                new Sphere(new(-0.3f, 0f, -0.5f), 0.05f),
-
-                // background. do not use with ambient light
-                //new Plane(new(0, 0, -100f), -cam1.ForwardDirection)
-            };
-
-            var ligntings = new ILighting[]
+            var lightings = new ILighting[]
             {
                 //redSun,
                 blueLightToNegativeZed,
@@ -68,28 +54,59 @@ internal class Program
                 pointLightingGreenMinusOneZeroOne
             };
 
-            Scene cowScene = new(
-                cam1,
-                ligntings,
-                cowObjects.ToArray());
+            var transformationsBuilder = new TransformationMatrixBuilder();
 
             //var triangleHell = new SceneCreator().TriangleHell(cam1, ligntings);
 
-            Renderer rendererWithoutLight = new(cowScene, new LightNeglectingCaster());
-            Renderer rendererWithColors = new(cowScene, new ColorConsideringCaster());
+            // cow
 
-            var transformationsBuilder = new TransformationMatrixBuilder();
-            var cowTransform = transformationsBuilder
-                .Rotate(Axes.X, -90)
-                .ThenTranslate(Axes.Z, -1);
+            //var cowTriangles = new ObjReader().ReadTriangles(source);
 
-            foreach (var triangle in cowTriangles)
+            //var cowObjects = new List<IIntersectable>(cowTriangles)
+            //{
+            //    new Sphere(new(0.3f, 0f, -0.5f), 0.05f),
+            //    new Sphere(new(-0.3f, 0f, -0.5f), 0.05f),
+
+            //    // background. do not use with ambient light
+            //    //new Plane(new(0, 0, -100f), -cam1.ForwardDirection)
+            //};
+
+            //Scene cowScene = new(
+            //    cam1,
+            //    lightings,
+            //    cowObjects.ToArray());
+
+            //var cowTransform = transformationsBuilder
+            //    .Rotate(Axes.X, -90)
+            //    .ThenTranslate(Axes.Z, -1);
+
+            //foreach (var triangle in cowTriangles)
+            //{
+            //    triangle.Transform(cowTransform);
+            //}
+
+            // f-16
+
+            var f16Triangles = new ObjReader().ReadTriangles(source);
+
+            Scene f16Scene = new(cam1, lightings, f16Triangles);
+
+            var f16Transform = transformationsBuilder
+                .Rotate(Axes.Y, -90)
+                .ThenTranslate(Axes.Z, -6)
+                .ThenTranslate(Axes.Y, -4);
+
+            foreach (var triangle in f16Triangles)
             {
-                triangle.Transform(cowTransform);
+                triangle.Transform(f16Transform);
             }
 
-            Image image = rendererWithColors.Render(vRes, hRes);
+            // common
 
+            Renderer rendererWithoutLight = new(f16Scene, new LightNeglectingCaster());
+            Renderer rendererWithColors = new(f16Scene, new ColorConsideringCaster());
+
+            Image image = rendererWithColors.Render(vRes, hRes);
 
             BmpImageWriter bmpWriter = new();
             bmpWriter.Write(image, destination);
