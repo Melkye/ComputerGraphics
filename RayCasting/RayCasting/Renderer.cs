@@ -1,4 +1,5 @@
-﻿using RayCasting.Casters;
+﻿using ImageConverter;
+using RayCasting.Casters;
 using RayCasting.Objects;
 using RayCasting.Scenes;
 
@@ -16,13 +17,13 @@ public class Renderer
 
     public ICaster Caster { get; }
 
-    public byte[,] Render(int height, int width)
+    public Image Render(int height, int width)
     {
         float aspectRatio = width / (float)height;
         float hFov = Scene.Camera.FieldOfView;
         float vFov = hFov / aspectRatio;
 
-        byte[,] image = new byte[height, width];
+        Pixel[,] pixelMap = new Pixel[height, width];
         float verticalAngleBetweenTwoPixels = vFov / (height - 1) * (float)(Math.PI / 180);
         float horizontalAngleBetweenTwoPixels = hFov / (width - 1) * (float)(Math.PI / 180);
 
@@ -34,7 +35,7 @@ public class Renderer
         float leftMostPixelHorizontalAngle = - hFov / 2 * (float)(Math.PI / 180);
 
 
-        for (int i = 0; i < image.GetLength(0); i++)
+        for (int i = 0; i < pixelMap.GetLength(0); i++)
         {
             /// varies from height/2 (upper border) to -height/2 (lower border)
 
@@ -46,7 +47,7 @@ public class Renderer
             
             Vector3D pixelVerticalDirection = cameraDirectionForward + verticalVector;
 
-            for (int j = 0; j < image.GetLength(1); j++)
+            for (int j = 0; j < pixelMap.GetLength(1); j++)
             {
                 // varies from -width/2 (left border) to width/2 (right border)
                 float pixelHorizontalAngle = leftMostPixelHorizontalAngle + horizontalAngleBetweenTwoPixels * j;
@@ -56,10 +57,10 @@ public class Renderer
 
                 Vector3D pixelDirection = pixelVerticalDirection + horizontalVector;
 
-                image[i, j] = Caster.Cast(Scene, pixelDirection.GetAngles()); // TODO remove angles (?)
+                pixelMap[i, j] = Caster.Cast(Scene, pixelDirection.Normalized());
             }
         }
 
-        return image;
+        return new Image(pixelMap);
     }
 }
