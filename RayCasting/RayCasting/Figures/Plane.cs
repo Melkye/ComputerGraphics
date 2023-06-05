@@ -63,4 +63,20 @@ public class Plane : IIntersectable
         // TODO: implement
         throw new NotImplementedException();
     }
+
+    public IIntersectable[]? GetFiguresInside()
+    {
+        // TODO: if needed, change self-returning logic to smth else
+        return new IIntersectable[] { this };
+    }
+
+    public Point3D GetCentralPoint()
+    {
+        return Point;
+    }
+    public List<Point3D> GetDiscretePoints()
+    {
+        return new List<Point3D> { Point };
+    }
 }
+

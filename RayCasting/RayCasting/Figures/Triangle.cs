@@ -10,11 +10,17 @@ public class Triangle : IIntersectable
         this.vertex0 = vertex0;
         this.vertex1 = vertex1;
         this.vertex2 = vertex2;
+        centralPoint = new Point3D(
+           (vertex0.X + vertex1.X + vertex2.X) / 3,
+           (vertex0.Y + vertex1.Y + vertex2.Y) / 3,
+           (vertex0.Z + vertex1.Z + vertex2.Z) / 3);
     }
 
     Point3D vertex0;
     Point3D vertex1;
     Point3D vertex2;
+    public Point3D centralPoint { get; private set; }
+
     readonly float _EPSILON = 0.0000001f;
 
 
@@ -67,5 +73,25 @@ public class Triangle : IIntersectable
         vertex0 = transformation.Multiply(vertex0);
         vertex1 = transformation.Multiply(vertex1);
         vertex2 = transformation.Multiply(vertex2);
+        centralPoint = new Point3D(
+            (vertex0.X + vertex1.X + vertex2.X) / 3,
+            (vertex0.Y + vertex1.Y + vertex2.Y) / 3,
+            (vertex0.Z + vertex1.Z + vertex2.Z) / 3);
+    }
+
+    public IIntersectable[]? GetFiguresInside()
+    {
+        // TODO: if needed, change self-returning logic to smth else
+        return new IIntersectable[] { this };
+    }
+
+    public Point3D GetCentralPoint()
+    {
+        return centralPoint;
+    }
+
+    public List<Point3D> GetDiscretePoints()
+    {
+        return new List<Point3D> { vertex0, vertex1, vertex2 };
     }
 }

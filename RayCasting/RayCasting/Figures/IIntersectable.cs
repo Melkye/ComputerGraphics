@@ -9,4 +9,10 @@ public interface IIntersectable
     Vector3D GetNormalVector(Point3D point);
 
     void Transform(TransformationMatrix4x4 transformation);
+
+    IIntersectable[]? GetFiguresInside();
+
+    Point3D GetCentralPoint();
+
+    List<Point3D> GetDiscretePoints();
 }
