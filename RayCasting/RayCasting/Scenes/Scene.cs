@@ -5,12 +5,14 @@ using RayCasting.Cameras;
 namespace RayCasting.Scenes;
 public class Scene
 {
-    public Scene(ICamera camera, ILighting[] lightings, IIntersectable[] figures)
+    public Scene(string name, ICamera camera, ILighting[] lightings, IIntersectable[] figures)
     {
+        Name = name;
         Camera = camera;
         Lightings = lightings;
         Figures = figures;
     }
+    public string Name { get; }
     public ICamera Camera { get; }
 
     // TODO remove public setter 

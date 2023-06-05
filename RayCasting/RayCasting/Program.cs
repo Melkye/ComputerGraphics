@@ -89,7 +89,11 @@ internal class Program
 
             var f16Triangles = new ObjReader().ReadTriangles(source);
 
-            Scene f16Scene = new(cam1, lightings, f16Triangles);
+            //Scene f16Scene = new(cam1, lightings, f16Triangles);
+            
+            List<Scene> scenes = new List<Scene>();
+
+            scenes.Add(new("f16Scene", cam1, lightings, f16Triangles));
 
             var f16Transform = transformationsBuilder
                 .Rotate(Axes.Y, -90)
@@ -103,8 +107,8 @@ internal class Program
 
             // common
 
-            Renderer rendererWithoutLight = new(f16Scene, new LightNeglectingCaster());
-            Renderer rendererWithColors = new(f16Scene, new ColorConsideringCaster());
+            Renderer rendererWithoutLight = new(scenes[0], new LightNeglectingCaster());
+            Renderer rendererWithColors = new(scenes[0], new ColorConsideringCaster());
 
             Image image = rendererWithColors.Render(vRes, hRes);
 

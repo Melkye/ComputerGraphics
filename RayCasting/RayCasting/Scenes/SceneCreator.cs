@@ -8,6 +8,7 @@ public class SceneCreator
 {
     public Scene Create9Spheres()
     {
+        string name = "";
         Camera camera = new(new(0, 0, 0), new(0, 0, -1), new(1, 0, 0), 60);
         ILighting lighting = new DirectionalLighting(new(255, 255, 255), 1, new(0, -1, 0));
         IIntersectable[] figures = new IIntersectable[]
@@ -23,19 +24,19 @@ public class SceneCreator
             new Sphere(new(1.5f, -1.5f, -5), 0.5f),
         };
 
-        Scene scene = new(camera, new ILighting[] { lighting }, figures);
+        Scene scene = new(name, camera, new ILighting[] { lighting }, figures);
 
         return scene;
     }
 
-    public Scene TriangleHell(Camera camera, ILighting[] lightings)
+    public Scene TriangleHell(string name, Camera camera, ILighting[] lightings)
     {
         //Camera camera = new(new(0, 0, 0), new(0, 0, -1), new(1, 0, 0), 90);
         //ILightSource downsideLight = new DirectedLightSource(new(0, 1, 0), new(0, -1, 0));
 
         float coordZ = -10;
 
-        Scene triangleHell = new(camera, lightings,
+        Scene triangleHell = new(name, camera, lightings,
         new IIntersectable[]
         {
             new Triangle(new(-5f, 4f, coordZ), new(-4f, 6f, coordZ), new(-3f,4f, coordZ)),
