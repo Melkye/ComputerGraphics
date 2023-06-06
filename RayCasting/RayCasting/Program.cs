@@ -25,6 +25,10 @@ internal class Program
             Console.ForegroundColor = ConsoleColor.White;
         }
 
+        if (Path.GetExtension(source) == "")
+        { 
+        
+        }
 
         try
         {
@@ -38,9 +42,6 @@ internal class Program
 
             Camera cam1 = new(new(0, 0, 0), new(0, 0, -1), new(0, 1, 0), hFov);
 
-            // TODO: fix lighting issue: need to invert direction for triangle or for cow
-            // at start when setting lighting dir or in caster when calculating brightness
-
             PointLighting pointLightingRedOneZeroOne = new(new(255, 0, 0), 1f, new(1, 0, 1));
             PointLighting pointLightingGreenMinusOneZeroOne = new(new(0, 255, 0), 1f, new(-1, 0, 1));
             DirectionalLighting blueLightToNegativeZed = new(new(0, 0, 255), 1, new(0, 0, -1));
@@ -48,44 +49,12 @@ internal class Program
 
             var lightings = new ILighting[]
             {
-                //redSun,
                 blueLightToNegativeZed,
                 pointLightingRedOneZeroOne,
                 pointLightingGreenMinusOneZeroOne
             };
 
             var transformationsBuilder = new TransformationMatrixBuilder();
-
-            //var triangleHell = new SceneCreator().TriangleHell(cam1, ligntings);
-
-            // cow
-
-            //var cowTriangles = new ObjReader().ReadTriangles(source);
-
-            //var cowObjects = new List<IIntersectable>(cowTriangles)
-            //{
-            //    new Sphere(new(0.3f, 0f, -0.5f), 0.05f),
-            //    new Sphere(new(-0.3f, 0f, -0.5f), 0.05f),
-
-            //    // background. do not use with ambient light
-            //    //new Plane(new(0, 0, -100f), -cam1.ForwardDirection)
-            //};
-
-            //Scene cowScene = new(
-            //    cam1,
-            //    lightings,
-            //    cowObjects.ToArray());
-
-            //var cowTransform = transformationsBuilder
-            //    .Rotate(Axes.X, -90)
-            //    .ThenTranslate(Axes.Z, -1);
-
-            //foreach (var triangle in cowTriangles)
-            //{
-            //    triangle.Transform(cowTransform);
-            //}
-
-            // f-16
 
             var f16Triangles = new ObjReader().ReadTriangles(source);
 

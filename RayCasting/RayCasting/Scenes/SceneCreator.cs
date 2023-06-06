@@ -8,7 +8,7 @@ public class SceneCreator
 {
     public Scene Create9Spheres()
     {
-        string name = "";
+        string name = "hiddenScene";
         Camera camera = new(new(0, 0, 0), new(0, 0, -1), new(1, 0, 0), 60);
         ILighting lighting = new DirectionalLighting(new(255, 255, 255), 1, new(0, -1, 0));
         IIntersectable[] figures = new IIntersectable[]
