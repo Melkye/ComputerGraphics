@@ -31,8 +31,8 @@ public class LightNeglectingKdTreeCaster : ICaster
 
         while (indicesToCheck.Count() > 0)
         {
-            var leftBox = scene.Figures[2 * indicesToCheck[0] + 1];
-            var rightBox = scene.Figures[2 * indicesToCheck[0] + 2];
+            var leftBox = scene.FiguresInBoxes[2 * indicesToCheck[0] + 1];
+            var rightBox = scene.FiguresInBoxes[2 * indicesToCheck[0] + 2];
 
             Point3D? leftBoxIntersection = leftBox.GetIntersectionPoint(ray);
             Point3D? rightBoxIntersection = rightBox.GetIntersectionPoint(ray);

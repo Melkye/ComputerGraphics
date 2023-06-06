@@ -14,12 +14,12 @@ public class ColorKdTreeCaster : ICaster
         Ray3D camRay = new(scene.Camera.Position, rayDirection);
 
         (Point3D? closestIntersectionPoint, Vector3D? normalVectorAtIntersectionPoint) =
-            GetClosestIntersectionPointAndNormalVector(camRay, scene.Figures);
+            GetClosestIntersectionPointAndNormalVector(camRay, scene.FiguresInBoxes);
 
         if (closestIntersectionPoint is null)
             return new Pixel(0, 0, 0);
 
-        Pixel color = GetColorAtPoint(scene.Lightings, scene.Figures, (Point3D)closestIntersectionPoint, (Vector3D)normalVectorAtIntersectionPoint);
+        Pixel color = GetColorAtPoint(scene.Lightings, scene.FiguresInBoxes, (Point3D)closestIntersectionPoint, (Vector3D)normalVectorAtIntersectionPoint);
 
         return color;
     }
@@ -88,31 +88,6 @@ public class ColorKdTreeCaster : ICaster
             }
         }
 
-        // Point3D? closestIntersectionPoint = null;
-        // float distance = float.MaxValue;
-        // int closestFigureIndex = -1;
-
-        // for (int i = 0; i < figures.Length; i++)
-        // {
-        //     Point3D? figureIntersectionPoint = figures[i].GetIntersectionPoint(camRay);
-        //     if (figureIntersectionPoint == null)
-        //         continue;
-
-        //     float distanceToFigure = camRay.Origin.GetDistance((Point3D)figureIntersectionPoint);
-        //     if (distanceToFigure >= distance)
-        //         continue;
-
-        //     closestIntersectionPoint = figureIntersectionPoint;
-        //     distance = distanceToFigure;
-        //     closestFigureIndex = i;
-        // }
-
-        // //HACK remove cast to Point3D
-        // Vector3D? normalVectorAtIntersectionPoint = null;
-
-        // if (closestIntersectionPoint is not null)
-        //     normalVectorAtIntersectionPoint = figures[closestFigureIndex].GetNormalVector((Point3D)closestIntersectionPoint);
-
         return (closestIntersectionPoint, normalVectorAtIntersectionPoint);
     }
 
@@ -165,7 +140,10 @@ public class ColorKdTreeCaster : ICaster
 
         Point3D? figureIntersectionPoint;
 
-        while (indicesToCheck.Count() > 0)
+        //while (indicesToCheck.Count() > 0)
+        // add check because ambient light should not be shaded thus passes empty array
+        while (indicesToCheck.Count() > 0 && figures.Count() > 0)
+
         {
             var leftBox = figures[2 * indicesToCheck[0] + 1];
             var rightBox = figures[2 * indicesToCheck[0] + 2];
@@ -214,49 +192,6 @@ public class ColorKdTreeCaster : ICaster
             indicesToCheck.RemoveAt(0);
         }
 
-        // Point3D? testIntersectionPoint = null;
-        // foreach (var box in closestFilledBoxes)
-        // {
-        //     foreach (var figure in box.GetFiguresInside())
-        //     {
-        //         testIntersectionPoint = figure.GetIntersectionPoint(rayFromPointToLight);
-        //         if (testIntersectionPoint is not null)
-        //         {
-        //             return true;
-        //         }
-        //     }
-        // }
-
-
-        // foreach (IIntersectable figure in closestFilledBoxes)
-        // {
-        //     var trianglesInside = figure.GetFiguresInside();
-
-        //     if (trianglesInside is not null)
-        //     {
-        //         foreach (IIntersectable triangle in trianglesInside)
-        //         {
-        //             Point3D? figureIntersectionPoint = triangle.GetIntersectionPoint(rayFromPointToLight);
-        //             if (figureIntersectionPoint is null)
-        //                 continue;
-
-        //             if (figureIntersectionPoint.Equals(point))
-        //                 continue;
-
-        //             if (figureIntersectionPoint is not null)
-        //                 return true;
-        //         }
-        //     }
-        //     // Point3D? figureIntersectionPoint = figure.GetIntersectionPoint(rayFromPointToLight);
-        //     // if (figureIntersectionPoint is null)
-        //     //     continue;
-
-        //     // if (figureIntersectionPoint.Equals(point))
-        //     //     continue;
-
-        //     // if (figureIntersectionPoint is not null)
-        //     //     return true;
-        // }
         return false;
 
     }
@@ -283,14 +218,14 @@ public class ColorKdTreeCaster : ICaster
 
         Transformations.TransformationMatrixBuilder builder = new();
 
-        Point3D pointAtDistance10FromIntersectionPoint = point + 10 * normalVector;
+        Point3D pointAtDistance10FromIntersectionPoint = point + normalVector;
 
         // possibly need to divide by number of lightings
         float distributedIntensity = intensity;
 
         foreach (Axes axis in Enum.GetValues<Axes>())
         {
-            for (float shift = -10; shift < 10; shift += 0.1f)
+            for (float shift = -1; shift < 1; shift += 0.1f)
             {
                 Point3D lightPosition = builder.Translate(axis, shift).Multiply(pointAtDistance10FromIntersectionPoint);
 
@@ -301,7 +236,7 @@ public class ColorKdTreeCaster : ICaster
                     continue;
 
                 // considering distance
-                brightness /= (lightPosition.GetDistance(point) * lightPosition.GetDistance(point));
+                brightness /= (lightPosition.GetDistance(point));
 
                 red += color.Red * distributedIntensity * brightness;
                 green += color.Green * distributedIntensity * brightness;
