@@ -13,6 +13,7 @@ internal class Program
 {
     private static void Main(string[] args)
     {
+        string sceneSelected = "";
         (string source, string destination) = ("", "");
         try
         {
@@ -27,7 +28,8 @@ internal class Program
 
         if (Path.GetExtension(source) == "")
         { 
-        
+            sceneSelected = source;
+            source = "";
         }
 
         try
