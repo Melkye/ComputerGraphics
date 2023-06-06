@@ -13,7 +13,8 @@ internal class Program
 {
     private static void Main(string[] args)
     {
-        string sceneSelected = "";
+        //string sceneSelected = "";
+
         (string source, string destination) = ("", "");
         try
         {
@@ -26,11 +27,8 @@ internal class Program
             Console.ForegroundColor = ConsoleColor.White;
         }
 
-        if (Path.GetExtension(source) == "")
-        { 
-            sceneSelected = source;
-            source = "";
-        }
+        string f16Source = Path.Combine(Environment.CurrentDirectory, @"..\..\..\Images\f-16.obj");
+        string cowSource = Path.Combine(Environment.CurrentDirectory, @"..\..\..\Images\cow.obj");
 
         try
         {
@@ -39,8 +37,8 @@ internal class Program
             Vector3D positiveYDirection = new(0, 1, 0);
             float hFov = 90;
 
-            int vRes = 50;
-            int hRes = 50;
+            int vRes = 100;
+            int hRes = 100;
 
             Camera cam1 = new(new(0, 0, 0), new(0, 0, -1), new(0, 1, 0), hFov);
 
@@ -56,27 +54,47 @@ internal class Program
                 pointLightingGreenMinusOneZeroOne
             };
 
-            var transformationsBuilder = new TransformationMatrixBuilder();
-
-            var f16Triangles = new ObjReader().ReadTriangles(source);
-
-            //Scene f16Scene = new(cam1, lightings, f16Triangles);
-            
             List<Scene> scenes = new List<Scene>();
 
-            scenes.Add(new("f16Scene", cam1, lightings, f16Triangles));
+            var cowTriangles = new ObjReader().ReadTriangles(cowSource);
+
+            var f16Triangles = new ObjReader().ReadTriangles(f16Source);
+
+            var transformationsBuilder = new TransformationMatrixBuilder();
+
+            var triangleHell = new SceneCreator().TriangleHell("cowTriangleHell", cam1, lightings);
+
+            var cowObjects = new List<IIntersectable>(cowTriangles)
+            {
+                new Sphere(new(0.3f, 0f, -0.5f), 0.05f),
+                new Sphere(new(-0.3f, 0f, -0.5f), 0.05f),
+            };
+
+            var cowTransform = transformationsBuilder
+                .Scale(0.5f)
+                .ThenRotate(Axes.X, -90)
+                .ThenRotate(Axes.Y, -180)
+                .ThenTranslate(Axes.Z, -1)
+                .ThenTranslate(Axes.Y, 0.03f);
 
             var f16Transform = transformationsBuilder
                 .Rotate(Axes.Y, -90)
                 .ThenTranslate(Axes.Z, -6)
-                .ThenTranslate(Axes.Y, -4);
+                .ThenTranslate(Axes.Y, -5);
+
+            var combine = f16Triangles.Concat(cowTriangles).ToArray();
 
             foreach (var triangle in f16Triangles)
             {
                 triangle.Transform(f16Transform);
             }
 
-            // common
+            foreach (var triangle in cowTriangles)
+            {
+                triangle.Transform(cowTransform);
+            }
+
+            scenes.Add(new Scene("Standard", cam1, lightings, combine));
 
             Renderer rendererWithoutLight = new(scenes[0], new LightNeglectingCaster());
             Renderer rendererWithColors = new(scenes[0], new ColorConsideringCaster());
@@ -91,7 +109,6 @@ internal class Program
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine(e.Message);
             Console.ForegroundColor = ConsoleColor.White;
-
         }
     }
 }

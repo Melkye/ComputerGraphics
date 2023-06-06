@@ -2,7 +2,7 @@
   "profiles": {
     "RayCasting": {
       "commandName": "Project",
-      "commandLineArgs": "--source=isrjtn --destination=C:\\\\Repos\\\\ComputerGraphics\\\\RayCasting\\\\RayCasting\\\\f-16.bmp"
+      "commandLineArgs": "--source=C:\\Users\\arikt\\Documents\\Programming\\ComputerGraphics\\RayCasting\\RayCasting\\Images\\f-16.obj --destination=C:\\Users\\arikt\\Documents\\Programming\\ComputerGraphics\\RayCasting\\RayCasting\\Images\\newScene1.bmp"
     }
   }
 }//C:\\Users\\arikt\\Documents\\Programming\\ComputerGraphics\\RayCasting\\RayCasting\\Images\\f-16.obj
