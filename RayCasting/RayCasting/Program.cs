@@ -13,102 +13,85 @@ internal class Program
 {
     private static void Main(string[] args)
     {
-        //string sceneSelected = "";
-
         (string source, string destination) = ("", "");
-        try
-        {
-            (source, destination) = new CommandLineArguments().ParserArgs(args);
-        }
-        catch (ArgumentException e)
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine(e.Message);
-            Console.ForegroundColor = ConsoleColor.White;
-        }
+        //try
+        //{
+        //    (source, destination) = new CommandLineArguments().ParserArgs(args);
+        //}
+        //catch (ArgumentException e)
+        //{
+        //    Console.ForegroundColor = ConsoleColor.Red;
+        //    Console.WriteLine(e.Message);
+        //    Console.ForegroundColor = ConsoleColor.White;
+        //}
 
+        destination = Path.Combine(Environment.CurrentDirectory, @"..\..\..\Images\output.png");
         string f16Source = Path.Combine(Environment.CurrentDirectory, @"..\..\..\Images\f-16.obj");
         string cowSource = Path.Combine(Environment.CurrentDirectory, @"..\..\..\Images\cow.obj");
 
         try
         {
-            Point3D coordOrigin = new(0, 0, 0);
-            Vector3D negativeZDirection = new(0, 0, -1);
-            Vector3D positiveYDirection = new(0, 1, 0);
             float hFov = 90;
 
-            int vRes = 100;
-            int hRes = 100;
+            int vRes = 108*10;
+            int hRes = 192*10;
 
             Camera cam1 = new(new(0, 0, 0), new(0, 0, -1), new(0, 1, 0), hFov);
 
+            // TODO: fix lighting issue: need to invert direction for triangle or for cow
+            // at start when setting lighting dir or in caster when calculating brightness
+
             PointLighting pointLightingRedOneZeroOne = new(new(255, 0, 0), 1f, new(1, 0, 1));
             PointLighting pointLightingGreenMinusOneZeroOne = new(new(0, 255, 0), 1f, new(-1, 0, 1));
+
+            PointLighting warmLightingOneFiveNegSeven = new(new(253, 244, 220), 1f, new(10, 5, -7));
+            PointLighting warmLightingMinusOneFiveNegSeven = new(new(253, 244, 220), 1f, new(-10, 5, -7));
+
+            PointLighting pinkLightingOneFiveNegSeven = new(new(255, 105, 180), 1f, new(6, 4, -7));
+            PointLighting cyanLightingMinusOneFiveNegSeven = new(new(0, 100, 100), 1f, new(-6, 4, -7));
+
             DirectionalLighting blueLightToNegativeZed = new(new(0, 0, 255), 1, new(0, 0, -1));
+            DirectionalLighting whiteLightToNegativeZed = new(new(255, 255, 255), 1, new(0, 0, -1));
+
             AmbientLighting redSun = new(new(255, 0, 0), 1f);
+            AmbientLighting sun = new(new(255, 255, 255), 1f);
 
             var lightings = new ILighting[]
             {
-                blueLightToNegativeZed,
-                pointLightingRedOneZeroOne,
-                pointLightingGreenMinusOneZeroOne
+                //sun,
+                //redSun,
+
+                //blueLightToNegativeZed,
+                //whiteLightToNegativeZed,
+
+                //pointLightingRedOneZeroOne,
+                //pointLightingGreenMinusOneZeroOne
+
+                //warmLightingOneFiveNegSeven,
+                //warmLightingMinusOneFiveNegSeven
+
+                pinkLightingOneFiveNegSeven,
+                cyanLightingMinusOneFiveNegSeven,
             };
 
-            List<Scene> scenes = new List<Scene>();
 
-            var cowTriangles = new ObjReader().ReadTriangles(cowSource);
+            // cows on plane
+            var cowsOnPlane = new SceneCreator().CowsOnPlane(cowSource, f16Source);
 
-            var f16Triangles = new ObjReader().ReadTriangles(f16Source);
+            //var transformationsBuilder = new TransformationMatrixBuilder();
+            //var transformation = transformationsBuilder.Rotate(Axes.Y, 50).ThenTranslate(3, 1, -2);
+            //cowsOnPlane.Transform(transformation);
 
-            var transformationsBuilder = new TransformationMatrixBuilder();
+            Image image = new Renderer(cowsOnPlane, new ColorKdTreeCaster()).Render(vRes, hRes);
 
-            var triangleHell = new SceneCreator().TriangleHell("cowTriangleHell", cam1, lightings);
-
-            var cowObjects = new List<IIntersectable>(cowTriangles)
-            {
-                new Sphere(new(0.3f, 0f, -0.5f), 0.05f),
-                new Sphere(new(-0.3f, 0f, -0.5f), 0.05f),
-            };
-
-            var cowTransform = transformationsBuilder
-                .Scale(0.5f)
-                .ThenRotate(Axes.X, -90)
-                .ThenRotate(Axes.Y, -180)
-                .ThenTranslate(Axes.Z, -1)
-                .ThenTranslate(Axes.Y, 0.03f);
-
-            var f16Transform = transformationsBuilder
-                .Rotate(Axes.Y, -90)
-                .ThenTranslate(Axes.Z, -6)
-                .ThenTranslate(Axes.Y, -5);
-
-            var combine = f16Triangles.Concat(cowTriangles).ToArray();
-
-            foreach (var triangle in f16Triangles)
-            {
-                triangle.Transform(f16Transform);
-            }
-
-            foreach (var triangle in cowTriangles)
-            {
-                triangle.Transform(cowTransform);
-            }
-
-            scenes.Add(new Scene("Standard", cam1, lightings, combine));
-
-            Renderer rendererWithoutLight = new(scenes[0], new LightNeglectingCaster());
-            Renderer rendererWithColors = new(scenes[0], new ColorConsideringCaster());
-
-            Image image = rendererWithColors.Render(vRes, hRes);
-
-            BmpImageWriter bmpWriter = new();
-            bmpWriter.Write(image, destination);
+            new BmpImageWriter().Write(image, destination);
         }
         catch (Exception e)
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine(e.Message);
             Console.ForegroundColor = ConsoleColor.White;
+
         }
     }
 }
