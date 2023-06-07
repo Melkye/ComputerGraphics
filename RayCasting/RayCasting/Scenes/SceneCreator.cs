@@ -163,4 +163,30 @@ public class SceneCreator
 
         return cowsOnPlaneSceneKd;
     }
+
+    public Scene Cow(string cowPath, ILighting[] lightings)
+    {
+        Camera cam = new(new(0, 0, 0), new(0, 0, -1), new(0, 1, 0), 90);
+
+        PointLighting pinkLightingOneFiveNegSeven = new(new(255, 105, 180), 1f, new(6, 4, -7));
+        PointLighting cyanLightingMinusOneFiveNegSeven = new(new(0, 100, 100), 1f, new(-6, 4, -7));
+
+        var transformationsBuilder = new TransformationMatrixBuilder();
+        var cowTransform = transformationsBuilder
+            .Scale(0.5f)
+            .ThenRotate(Axes.X, -90)
+            .ThenRotate(Axes.Y, -180)
+            .ThenTranslate(Axes.Z, -1);
+
+        var cowTriangles = new ObjReader().ReadTriangles(cowPath);
+
+        foreach (var triangle in cowTriangles)
+        {
+            triangle.Transform(cowTransform);
+        }
+
+        Scene cow = new("cow", cam, lightings, cowTriangles);
+
+        return cow;
+    }
 }
