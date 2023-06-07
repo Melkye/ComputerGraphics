@@ -77,18 +77,12 @@ public class SceneCreator
         return triangleHell;
     }
 
-    public Scene CowsOnPlane(string cowPath, string f16Path)
+    public Scene CowsOnPlane(string cowPath, string f16Path, ILighting[] lightings)
     {
         Camera cam1 = new(new(0, 0, 0), new(0, 0, -1), new(0, 1, 0), 90);
 
         PointLighting pinkLightingOneFiveNegSeven = new(new(255, 105, 180), 1f, new(6, 4, -7));
         PointLighting cyanLightingMinusOneFiveNegSeven = new(new(0, 100, 100), 1f, new(-6, 4, -7));
-
-        var lightings = new ILighting[]
-        {
-            pinkLightingOneFiveNegSeven,
-            cyanLightingMinusOneFiveNegSeven,
-        };
 
         var transformationsBuilder = new TransformationMatrixBuilder();
 

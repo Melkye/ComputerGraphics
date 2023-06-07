@@ -12,8 +12,6 @@ public interface ICamera
 
     Vector3D RightDirection { get; }
 
-    // TODO: decide if need this
-    //void Transform(TransformationMatrix4x4 transformation);
     void Rotate(TransformationMatrix4x4 rotation);
 
     void Rotate(Axes axis, float angleInDegrees);

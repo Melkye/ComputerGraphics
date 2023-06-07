@@ -16,10 +16,8 @@ namespace RayCasting.Casters;
 //https://www.geeksforgeeks.org/given-linked-list-representation-of-complete-tree-convert-it-to-linked-representation/
 public class LightNeglectingKdTreeCaster : ICaster
 {
-    public Pixel Cast(Scene scene, Vector3D pixelAngles)
+    public Pixel Cast(Scene scene, Vector3D rayDirection)
     {
-        Vector3D rayDirection = pixelAngles;
-
         Ray3D ray = new(scene.Camera.Position, rayDirection);
 
         Point3D? intersectionPoint = null;

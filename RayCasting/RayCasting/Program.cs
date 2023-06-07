@@ -25,10 +25,11 @@ internal class Program
         //    Console.ForegroundColor = ConsoleColor.White;
         //}
 
-        destination = Path.Combine(Environment.CurrentDirectory, @"..\..\..\Images\output1.png");
+        destination = Path.Combine(Environment.CurrentDirectory, @"..\..\..\Images\output.png");
         string f16Source = Path.Combine(Environment.CurrentDirectory, @"..\..\..\Images\f-16.obj");
         string cowSource = Path.Combine(Environment.CurrentDirectory, @"..\..\..\Images\cow.obj");
         string geraltSource = Path.Combine(Environment.CurrentDirectory, @"..\..\..\Images\geralt.obj");
+
 
         try
         {
@@ -52,39 +53,46 @@ internal class Program
             PointLighting cyanLightingMinusOneFiveNegSeven = new(new(0, 100, 100), 1f, new(-6, 4, -7));
 
             DirectionalLighting blueLightToNegativeZed = new(new(0, 0, 255), 1, new(0, 0, -1));
-            DirectionalLighting whiteLightToNegativeZed = new(new(255, 255, 255), 1, new(0, 1, -1));
+            DirectionalLighting whiteLightToNegativeZed = new(new(255, 255, 255), 1, new(0, 0, -1));
 
             AmbientLighting redSun = new(new(255, 0, 0), 1f);
             AmbientLighting sun = new(new(255, 255, 255), 1f);
 
             var lightings = new ILighting[]
             {
-                //sun,
+                sun,
                 //redSun,
 
                 //blueLightToNegativeZed,
                 //whiteLightToNegativeZed,
 
                 //pointLightingRedOneZeroOne,
-                //pointLightingGreenMinusOneZeroOne
+                //pointLightingGreenMinusOneZeroOne,
 
-                warmLightingOneFiveNegSeven,
-                warmLightingMinusOneFiveNegSeven
+                //warmLightingOneFiveNegSeven,
+                //warmLightingMinusOneFiveNegSeven,
 
                 //pinkLightingOneFiveNegSeven,
                 //cyanLightingMinusOneFiveNegSeven,
             };
 
             
-            // cows on plane
-            var cowsAndGeraltOnPlane = new SceneCreator().CowsAndGeraltOnPlane(cowSource, f16Source, geraltSource);
-            //var tree = new Scene("", cam1, lightings, treeSource);
-            //new SceneCreator().CowsOnPlane(cowSource, f16Source);
+            // cows and geralt on plane
+            var cowsOnPlane = new SceneCreator().CowsOnPlane(cowSource, f16Source, lightings);
+
+            //var transformationsBuilder = new TransformationMatrixBuilder();
+            //var transformation = transformationsBuilder.Rotate(Axes.Y, 50).ThenTranslate(3, 1, -2);
+            //cowsAndGeraltOnPlane.Transform(transformation);
 
             // cow
-            var cow = new SceneCreator().Cow(cowSource, lightings);
+            //var cow = new SceneCreator().Cow(cowSource, lightings);
 
-            Image image = new Renderer(cowsAndGeraltOnPlane, new ColorKdTreeCaster()).Render(vRes, hRes);
+            //cow.Figures = cow.Figures.Concat(new IIntersectable[] { new Sphere(new(2, 2, -1), 1) }).ToArray();
+            //cow.Transform(transformationBuilder.);
+
+            Console.WriteLine(DateTime.Now);
+            Image image = new Renderer(cowsOnPlane, new LightNeglectingKdTreeCaster()).Render(vRes, hRes);
+            Console.WriteLine(DateTime.Now);
 
             new BmpImageWriter().Write(image, destination);
 
