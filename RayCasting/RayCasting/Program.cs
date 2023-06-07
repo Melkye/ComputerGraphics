@@ -28,13 +28,14 @@ internal class Program
         destination = Path.Combine(Environment.CurrentDirectory, @"..\..\..\Images\output.png");
         string f16Source = Path.Combine(Environment.CurrentDirectory, @"..\..\..\Images\f-16.obj");
         string cowSource = Path.Combine(Environment.CurrentDirectory, @"..\..\..\Images\cow.obj");
+        string ironManSource = Path.Combine(Environment.CurrentDirectory, @"..\..\..\Images\IronMan.obj");
 
         try
         {
             float hFov = 90;
 
-            int vRes = 108*10;
-            int hRes = 192*10;
+            int vRes = 108*3;
+            int hRes = 192*3;
 
             Camera cam1 = new(new(0, 0, 0), new(0, 0, -1), new(0, 1, 0), hFov);
 
@@ -51,7 +52,7 @@ internal class Program
             PointLighting cyanLightingMinusOneFiveNegSeven = new(new(0, 100, 100), 1f, new(-6, 4, -7));
 
             DirectionalLighting blueLightToNegativeZed = new(new(0, 0, 255), 1, new(0, 0, -1));
-            DirectionalLighting whiteLightToNegativeZed = new(new(255, 255, 255), 1, new(0, 0, -1));
+            DirectionalLighting whiteLightToNegativeZed = new(new(255, 255, 255), 1, new(0, 1, -1));
 
             AmbientLighting redSun = new(new(255, 0, 0), 1f);
             AmbientLighting sun = new(new(255, 255, 255), 1f);
@@ -67,22 +68,33 @@ internal class Program
                 //pointLightingRedOneZeroOne,
                 //pointLightingGreenMinusOneZeroOne
 
-                //warmLightingOneFiveNegSeven,
-                //warmLightingMinusOneFiveNegSeven
+                warmLightingOneFiveNegSeven,
+                warmLightingMinusOneFiveNegSeven
 
-                pinkLightingOneFiveNegSeven,
-                cyanLightingMinusOneFiveNegSeven,
+                //pinkLightingOneFiveNegSeven,
+                //cyanLightingMinusOneFiveNegSeven,
             };
 
-
+            
             // cows on plane
             var cowsOnPlane = new SceneCreator().CowsOnPlane(cowSource, f16Source);
 
-            //var transformationsBuilder = new TransformationMatrixBuilder();
-            //var transformation = transformationsBuilder.Rotate(Axes.Y, 50).ThenTranslate(3, 1, -2);
-            //cowsOnPlane.Transform(transformation);
+            // cow
+            var cow = new SceneCreator().Cow(cowSource, lightings);
 
+            var transformationsBuilder = new TransformationMatrixBuilder();
+            var transformation = transformationsBuilder.Rotate(Axes.Y, 50).ThenTranslate(3, 1, -2);
+            cowsOnPlane.Transform(transformation);
+
+            // iron man
+            //var ironManTriangles = new ObjReader().ReadTriangles(ironManSource);
+            //Scene IronManScene = new("IronMan", cam1, lightings, ironManTriangles);
+            //cam1.Translate(Axes.Z, 200);
+            //cam1.Translate(Axes.Y, 150);
+
+            Console.WriteLine("Start:" + DateTime.Now);
             Image image = new Renderer(cowsOnPlane, new ColorKdTreeCaster()).Render(vRes, hRes);
+            Console.WriteLine("End:" + DateTime.Now);
 
             new BmpImageWriter().Write(image, destination);
         }

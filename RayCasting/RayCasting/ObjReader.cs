@@ -22,7 +22,7 @@ namespace RayCasting
             {
                 if (line.StartsWith("v "))
                 {
-                    splitLine = line.Split();
+                    splitLine = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
                     points.Add(new Point3D(ToFloat(splitLine[1]),
                             ToFloat(splitLine[2]),
                             ToFloat(splitLine[3])));
