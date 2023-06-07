@@ -25,9 +25,10 @@ internal class Program
         //    Console.ForegroundColor = ConsoleColor.White;
         //}
 
-        destination = Path.Combine(Environment.CurrentDirectory, @"..\..\..\Images\output.png");
+        destination = Path.Combine(Environment.CurrentDirectory, @"..\..\..\Images\output1.png");
         string f16Source = Path.Combine(Environment.CurrentDirectory, @"..\..\..\Images\f-16.obj");
         string cowSource = Path.Combine(Environment.CurrentDirectory, @"..\..\..\Images\cow.obj");
+        string geraltSource = Path.Combine(Environment.CurrentDirectory, @"..\..\..\Images\geralt.obj");
 
         try
         {
@@ -76,15 +77,18 @@ internal class Program
 
 
             // cows on plane
-            var cowsOnPlane = new SceneCreator().CowsOnPlane(cowSource, f16Source);
+            var cowsAndGeraltOnPlane = new SceneCreator().CowsAndGeraltOnPlane(cowSource, f16Source, geraltSource);
+            //var tree = new Scene("", cam1, lightings, treeSource);
+            //new SceneCreator().CowsOnPlane(cowSource, f16Source);
 
             //var transformationsBuilder = new TransformationMatrixBuilder();
             //var transformation = transformationsBuilder.Rotate(Axes.Y, 50).ThenTranslate(3, 1, -2);
             //cowsOnPlane.Transform(transformation);
 
-            Image image = new Renderer(cowsOnPlane, new ColorKdTreeCaster()).Render(vRes, hRes);
+            Image image = new Renderer(cowsAndGeraltOnPlane, new ColorKdTreeCaster()).Render(vRes, hRes);
 
             new BmpImageWriter().Write(image, destination);
+
         }
         catch (Exception e)
         {

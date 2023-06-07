@@ -163,4 +163,108 @@ public class SceneCreator
 
         return cowsOnPlaneSceneKd;
     }
+
+    public Scene CowsAndGeraltOnPlane(string cowPath, string f16Path, string geraltPath)
+    {
+        Camera cam1 = new(new(0, 0, 0), new(0, 0, -1), new(0, 1, 0), 90);
+
+        PointLighting pinkLightingOneFiveNegSeven = new(new(255, 105, 180), 1f, new(6, 4, -7));
+        PointLighting cyanLightingMinusOneFiveNegSeven = new(new(0, 100, 100), 1f, new(-6, 4, -7));
+
+        var lightings = new ILighting[]
+        {
+            pinkLightingOneFiveNegSeven,
+            cyanLightingMinusOneFiveNegSeven,
+        };
+
+        var transformationsBuilder = new TransformationMatrixBuilder();
+
+        // cows
+        var cowOnNoseTriangles = new ObjReader().ReadTriangles(cowPath);
+        var cowOnRightWingTriangles = new ObjReader().ReadTriangles(cowPath);
+        var cowOnLeftWingTriangles = new ObjReader().ReadTriangles(cowPath);
+
+        var cowOnNoseTransform = transformationsBuilder
+            .Scale(2f)
+            .ThenRotate(Axes.X, -90)
+            .ThenRotate(Axes.Y, -180)
+            .ThenTranslate(Axes.X, -4.2f)
+            .ThenTranslate(Axes.Y, 1.75f)
+            .ThenTranslate(Axes.Z, -7.9f)
+            .ThenRotate(Axes.Z, 14);
+
+        var cowOnRightWingTransform = transformationsBuilder
+            .Scale(2f)
+            .ThenRotate(Axes.X, -90)
+            .ThenRotate(Axes.Y, -180)
+            .ThenTranslate(Axes.X, 1)
+            .ThenTranslate(Axes.Y, 0.4f)
+            .ThenTranslate(Axes.Z, -9.5f);
+
+        var cowOnLeftWingTransform = transformationsBuilder
+            .Scale(2f)
+            .ThenRotate(Axes.X, -90)
+            .ThenRotate(Axes.Y, -180)
+            .ThenTranslate(Axes.X, 1)
+            .ThenTranslate(Axes.Y, 0.4f)
+            .ThenTranslate(Axes.Z, -6f);
+
+        for (int i = 0; i < cowOnNoseTriangles.Length; i++)
+        {
+            cowOnNoseTriangles[i].Transform(cowOnNoseTransform);
+            cowOnRightWingTriangles[i].Transform(cowOnRightWingTransform);
+            cowOnLeftWingTriangles[i].Transform(cowOnLeftWingTransform);
+        }
+
+        //geralt
+        var geraltTriangles = new ObjReader().ReadTriangles(geraltPath);
+
+        var geraltTransform = transformationsBuilder
+            .Scale(0.5f)
+            //.ThenRotate(Axes.X, -90)
+            .ThenRotate(Axes.Y, -90)
+            .ThenTranslate(Axes.X, -5.2f)
+            .ThenTranslate(Axes.Y, 0.57f)
+            .ThenTranslate(Axes.Z, -7.9f)
+            /*.ThenRotate(Axes.Z, 14)*/;
+
+        foreach (var triangle in geraltTriangles)
+        {
+            triangle.Transform(geraltTransform);
+        }
+
+        // f-16
+        var f16Triangles = new ObjReader().ReadTriangles(f16Path);
+
+        var f16Transform = transformationsBuilder
+            .Rotate(Axes.Y, -90)
+            .ThenTranslate(Axes.Z, -6)
+            .ThenTranslate(Axes.Y, -4);
+
+        foreach (var triangle in f16Triangles)
+        {
+            triangle.Transform(f16Transform);
+        }
+
+        // concat figures
+        var cowsAndGeraltOnPlaneTriangles = f16Triangles
+            .Concat(cowOnNoseTriangles)
+            .Concat(cowOnLeftWingTriangles)
+            .Concat(cowOnRightWingTriangles)
+            .Concat(geraltTriangles)
+            .ToArray();
+
+
+        // cam transforms
+        cam1.Rotate(Axes.X, -20);
+        cam1.Rotate(Axes.Y, -60);
+
+        cam1.Translate(Axes.X, -7f);
+        cam1.Translate(Axes.Y, 2f);
+        cam1.Translate(Axes.Z, -5f);
+
+        Scene cowsOnPlaneSceneKd = new("cowsAndGeraltOnPlane", cam1, lightings, cowsAndGeraltOnPlaneTriangles);
+
+        return cowsOnPlaneSceneKd;
+    }
 }
