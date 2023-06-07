@@ -11,9 +11,5 @@ public interface ILighting
     // has values in interval [0; 1]
     public float Intensity { get; }
 
-    public Vector3D GetDirection(Point3D targetPoint);
-
-    //// TODO consider if need this or GetDirection works fine
-    //// [0; 1]
-    //public Pixel GetColorAtPoint(Point3D targetPoint);
+    public Vector3D[] GetDirections(Point3D targetPoint);
 }

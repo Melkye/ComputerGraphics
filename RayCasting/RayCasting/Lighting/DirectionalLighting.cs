@@ -17,5 +17,5 @@ public class DirectionalLighting : ILighting
 
     private Vector3D Direction { get; }
 
-    public Vector3D GetDirection(Point3D targetPoint) => Direction;
+    public Vector3D[] GetDirections(Point3D targetPoint) => new Vector3D[] { Direction };
 }

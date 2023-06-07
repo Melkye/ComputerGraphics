@@ -13,9 +13,10 @@ public class PointLighting : ILighting
     }
 
     public Pixel Color { get; }
+
     public float Intensity { get; }
 
     private Point3D Position { get; }
 
-    public Vector3D GetDirection(Point3D targetPoint) => new Vector3D(Position, targetPoint).Normalized();
+    public Vector3D[] GetDirections(Point3D targetPoint) => new Vector3D[] { new Vector3D(Position, targetPoint).Normalized() };
 }

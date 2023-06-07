@@ -67,7 +67,6 @@ public class ColorKdTreeCaster : ICaster
             indicesToCheck.RemoveAt(0);
         }
 
-        //HACK remove cast to Point3D
         Vector3D? normalVectorAtIntersectionPoint = null;
 
         Point3D? testIntersectionPoint = null;
@@ -95,37 +94,25 @@ public class ColorKdTreeCaster : ICaster
     {
         // TODO learn what to do when two lightings collide
         // currently they are added (value += (color * intensity) * brightness)
+        // TODO add exposure
+        // TODO gamma correction
+
         Pixel color = new();
 
         foreach (ILighting lighting in lightings)
         {
-            // TODO consider removing check for AmbientLighting
-            if (lighting is AmbientLighting)
-            {
-                Pixel colorByAmbientLighting = GetAmbient(figures, lighting.Color, point, normalVector, lighting.Intensity);
-                byte redByAmbientLighting = (byte)(colorByAmbientLighting.Red * lighting.Intensity);
-                byte greenByAmbientLighting = (byte)(colorByAmbientLighting.Green * lighting.Intensity);
-                byte blueByAmbientLighting = (byte)(colorByAmbientLighting.Blue * lighting.Intensity);
+                float brightnessByCurrentLighting = CalculateBrightness(lighting, figures, point, normalVector);
+                if (brightnessByCurrentLighting == 0)
+                    continue;
+
+                byte redByCurrentLighting = (byte)(lighting.Color.Red * lighting.Intensity * brightnessByCurrentLighting);
+                byte greenByCurrentLighting = (byte)(lighting.Color.Green * lighting.Intensity * brightnessByCurrentLighting);
+                byte blueByCurrentLighting = (byte)(lighting.Color.Blue * lighting.Intensity * brightnessByCurrentLighting);
 
                 color = new(
-                    (byte)(color.Red + redByAmbientLighting),
-                    (byte)(color.Green + greenByAmbientLighting),
-                    (byte)(color.Blue + blueByAmbientLighting));
-                continue;
-            }
-
-            float brightnessByCurrentLighting = CalculateBrightness(lighting, figures, point, normalVector);
-            if (brightnessByCurrentLighting == 0)
-                continue;
-
-            byte redByCurrentLighting = (byte)(lighting.Color.Red * lighting.Intensity * brightnessByCurrentLighting);
-            byte greenByCurrentLighting = (byte)(lighting.Color.Green * lighting.Intensity * brightnessByCurrentLighting);
-            byte blueByCurrentLighting = (byte)(lighting.Color.Blue * lighting.Intensity * brightnessByCurrentLighting);
-
-            color = new(
-                (byte)(color.Red + redByCurrentLighting),
-                (byte)(color.Green + greenByCurrentLighting),
-                (byte)(color.Blue + blueByCurrentLighting));
+                    (byte)(color.Red + redByCurrentLighting),
+                    (byte)(color.Green + greenByCurrentLighting),
+                    (byte)(color.Blue + blueByCurrentLighting));
         }
 
         return color;
@@ -140,9 +127,7 @@ public class ColorKdTreeCaster : ICaster
 
         Point3D? figureIntersectionPoint;
 
-        //while (indicesToCheck.Count() > 0)
-        // add check because ambient light should not be shaded thus passes empty array
-        while (indicesToCheck.Count() > 0 && figures.Count() > 0)
+        while (indicesToCheck.Count() > 0)
 
         {
             var leftBox = figures[2 * indicesToCheck[0] + 1];
@@ -198,54 +183,26 @@ public class ColorKdTreeCaster : ICaster
 
     private float CalculateBrightness(ILighting lighting, IIntersectable[] figures, Point3D point, Vector3D normalVector)
     {
-        float brightnessByLightingMinusOneToOne = -normalVector.Dot(lighting.GetDirection(point));
-        if (brightnessByLightingMinusOneToOne <= 0f)
-            return 0;
+        float totalBrightnessByLighting = 0;
+        var directions = lighting.GetDirections(point);
 
-        float brightnessByLighting0To1 = brightnessByLightingMinusOneToOne;
-
-        Vector3D vectorFromPointToLight = -lighting.GetDirection(point);
-        if (IsPointShaded(figures, point, vectorFromPointToLight))
-            brightnessByLighting0To1 *= 0.5f;
-
-        return brightnessByLighting0To1;
-    }
-    private Pixel GetAmbient(IIntersectable[] figures, Pixel color, Point3D point, Vector3D normalVector, float intensity)
-    {
-        float red = 0;
-        float green = 0;
-        float blue = 0;
-
-        Transformations.TransformationMatrixBuilder builder = new();
-
-        Point3D pointAtDistance10FromIntersectionPoint = point + normalVector;
-
-        // possibly need to divide by number of lightings
-        float distributedIntensity = intensity;
-
-        foreach (Axes axis in Enum.GetValues<Axes>())
+        foreach (var direction in directions)
         {
-            for (float shift = -1; shift < 1; shift += 0.1f)
-            {
-                Point3D lightPosition = builder.Translate(axis, shift).Multiply(pointAtDistance10FromIntersectionPoint);
+            float brightnessByLightingMinusOneToOne = -normalVector.Dot(direction);
+            if (brightnessByLightingMinusOneToOne <= 0f)
+                continue;
 
-                PointLighting directional = new(color, distributedIntensity, lightPosition);
+            float brightnessByLightingDir0To1 = brightnessByLightingMinusOneToOne;
 
-                float brightness = CalculateBrightness(directional, Array.Empty<IIntersectable>(), point, normalVector);
-                if (brightness == 0)
-                    continue;
+            Vector3D vectorFromPointToLight = -direction;
+            if (IsPointShaded(figures, point, vectorFromPointToLight))
+                brightnessByLightingDir0To1 *= 0.3f;
 
-                // considering distance
-                brightness /= (lightPosition.GetDistance(point));
-
-                red += color.Red * distributedIntensity * brightness;
-                green += color.Green * distributedIntensity * brightness;
-                blue += color.Blue * distributedIntensity * brightness;
-            }
+            totalBrightnessByLighting += brightnessByLightingDir0To1;
         }
 
-        Pixel resultColor = new((byte)red, (byte)green, (byte)blue);
+        var totalBrightnessByLightingNormalized = totalBrightnessByLighting / directions.Count();
 
-        return resultColor;
+        return totalBrightnessByLightingNormalized;
     }
 }
