@@ -1,4 +1,5 @@
 ﻿using RayCasting.Objects;
+using RayCasting.Transformations;
 
 namespace RayCasting.Figures;
 public class Sphere : IIntersectable
@@ -13,7 +14,7 @@ public class Sphere : IIntersectable
     public Point3D? GetIntersectionPoint(Ray3D ray)
     {
         // ray.dir^2 * t^2 + 2*ray.dir*(ray.origin - center) * t + (ray.origin - center)^2 - r^2 = 0
-        
+
         // a = ray.dir^2
         // b = 2*ray.dir*(ray.origin - center)
         // c = (ray.origin - center)^2 - r^2
@@ -28,14 +29,14 @@ public class Sphere : IIntersectable
 
         if (D < 0)
         {
-            return null;        
+            return null;
         }
 
-        float t = (- b - (float)Math.Sqrt(D)) / (2 * a);
+        float t = (-b - (float)Math.Sqrt(D)) / (2 * a);
 
         // if coeff is negative, sphere is in ray's opposite dir
         if (t < 0)
-            t = (- b + (float)Math.Sqrt(D)) / (2 * a);
+            t = (-b + (float)Math.Sqrt(D)) / (2 * a);
 
         if (t < 0)
             return null;
@@ -51,5 +52,27 @@ public class Sphere : IIntersectable
         Vector3D normalVector = new Vector3D(Center, point).Normalized();
 
         return normalVector;
+    }
+
+    public void Transform(TransformationMatrix4x4 transformation)
+    {
+        // TODO: implement
+        throw new NotImplementedException();
+    }
+
+    public IIntersectable[]? GetFiguresInside()
+    {
+        // TODO: if needed, change self-returning logic to smth else
+        return new IIntersectable[] { this };
+    }
+
+    public Point3D GetCentralPoint()
+    {
+        return Center;
+    }
+
+    public List<Point3D> GetDiscretePoints()
+    {
+        return new List<Point3D> { Center };
     }
 }

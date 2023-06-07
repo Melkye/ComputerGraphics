@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RayCasting.Objects;
+using RayCasting.Transformations;
 
 namespace RayCasting.Figures;
 public class Plane : IIntersectable
@@ -56,4 +57,26 @@ public class Plane : IIntersectable
         // TODO: consider ray coming from one or the other side -- should NormalVector be the same?
         return NormalVector;
     }
+
+    public void Transform(TransformationMatrix4x4 transformation)
+    {
+        // TODO: implement
+        throw new NotImplementedException();
+    }
+
+    public IIntersectable[]? GetFiguresInside()
+    {
+        // TODO: if needed, change self-returning logic to smth else
+        return new IIntersectable[] { this };
+    }
+
+    public Point3D GetCentralPoint()
+    {
+        return Point;
+    }
+    public List<Point3D> GetDiscretePoints()
+    {
+        return new List<Point3D> { Point };
+    }
 }
+

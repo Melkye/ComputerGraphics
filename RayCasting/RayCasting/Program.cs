@@ -1,90 +1,108 @@
-﻿using RayCasting;
-using RayCasting.Objects;
-using RayCasting.Lighting;
-using RayCasting.Figures;
-using RayCasting.Cameras;
-using RayCasting.Scenes;
-using RayCasting.Casters;
-using RayCasting.Writers;
 using ImageConverter;
+using ImageConverter.Bmp;
+using RayCasting;
+using RayCasting.Cameras;
+using RayCasting.Casters;
+using RayCasting.Figures;
+using RayCasting.Lighting;
+using RayCasting.Objects;
+using RayCasting.Scenes;
+using RayCasting.Transformations;
 
-Point3D coordOrigin = new(0, 0, -1);
-Vector3D negativeZDirection = new(0, 0, -1);
-Vector3D positiveYDirection = new(0, 1, 0);
-float vFov = 120;
-
-int vRes = 1080;
-int hRes = 1920;
-
-Camera cam1 = new(coordOrigin, negativeZDirection, positiveYDirection, vFov);
-
-Sphere sphere1 = new(new(0, 0, -7), 1f);
-Sphere sphere2 = new(new(0.8f, 1, -5), 0.5f);
-Sphere sphere3 = new(new(0.5f, 0.5f, -2), 0.3f);
-
-Disk disk1 = new(new(0, 0, -2), 0.5f, new(3, 0, 1));
-Disk disk2 = new(new(-0.3f, -0.3f, -1), 0.3f, new(2, 0, 1));
-
-IIntersectable[] figures = { sphere1, sphere2, sphere3, disk1, disk2 };
-
-Point3D lightOrigin = new(-1, 4, 3); // test cases: (-10, 1, 1) (-1, 10, 1) (-1, 1, 1) (-1, 4, 3) (1, 1, -1)
-DirectedLightSource lightSource = new(lightOrigin, new(lightOrigin, new(0, 0, -1)));
-DirectedLightSource downsideLight = new(new(), new(0, -1, 0));
-
-Scene lotsOfThings = new(cam1, lightSource, figures);
-Scene sphereInCenterHalfLighted = new(cam1, downsideLight, new IIntersectable[] { new Sphere(new(0, 0, -3), 1) });
-Scene planeParallelToCam = new(cam1, downsideLight, new IIntersectable[] { new Plane(new(0, 0, 0), new(0, 1, 0)) });
-Scene diskInLeftSide = new(cam1, lightSource, new IIntersectable[] { disk1 });
-
-Scene nineShperesDeskAndPlane = new(cam1, downsideLight,
-    new IIntersectable[] {
-        new Sphere(new(-1.5f, 1.5f, -5), 0.5f),
-        new Sphere(new(0, 1.5f, -5), 0.5f),
-        new Sphere(new(3f, 2f, -5), 0.5f),
-        new Sphere(new(-6f, 0, -5), 0.5f),
-        new Sphere(new(0, 0, -5), 0.5f),
-        new Sphere(new(1.5f, 0, -5), 0.5f),
-        new Sphere(new(-1.5f, -1.5f, -5), 0.5f),
-        new Sphere(new(0, -1.5f, -5), 0.5f),
-        new Sphere(new(1.5f, -1.5f, -5), 0.5f),
-
-        //new Disk(new(0, 0, -10), 2, new(0, 1, 1)),
-
-        //new Sphere(new(1, 0, -3), 1)
-
-        //new Plane(new(0, 0, -10), new(0, 10, 1))
-    });
-;
-
-Renderer renderer = new(nineShperesDeskAndPlane, new LightConsideringCaster());
-
-byte[,] image = renderer.Render(vRes, hRes);
-
-ConsoleWriter writer = new();
-ImageConverter.Bmp.BmpImageWriter bmpWriter = new();
-
-bmpWriter.Write(OneColorByteArrayToImage(image), "C:\\Repos\\ComputerGraphics\\RayCasting\\RayCasting\\image.bmp");
-
-//writer.WriteNeglectingLight(image);
-
-Console.WriteLine("----------------------------------------------------");
-
-//writer.Write(image2);
-Console.WriteLine("----------------------------------------------------");
-//writer.Write(image3);
-
-Image OneColorByteArrayToImage(byte[,] image)
+internal class Program
 {
-    int height = image.GetLength(0);
-    int width = image.GetLength(1);
-    Pixel[,] pixels = new Pixel[height, width];
-    for (int i = 0; i < height; i++)
+    private static void Main(string[] args)
     {
-        for (int j = 0; j < width; j++)
+        (string source, string destination) = ("", "");
+        //try
+        //{
+        //    (source, destination) = new CommandLineArguments().ParserArgs(args);
+        //}
+        //catch (ArgumentException e)
+        //{
+        //    Console.ForegroundColor = ConsoleColor.Red;
+        //    Console.WriteLine(e.Message);
+        //    Console.ForegroundColor = ConsoleColor.White;
+        //}
+
+        destination = Path.Combine(Environment.CurrentDirectory, @"..\..\..\Images\output.png");
+        string f16Source = Path.Combine(Environment.CurrentDirectory, @"..\..\..\Images\f-16.obj");
+        string cowSource = Path.Combine(Environment.CurrentDirectory, @"..\..\..\Images\cow.obj");
+        string geraltSource = Path.Combine(Environment.CurrentDirectory, @"..\..\..\Images\geralt.obj");
+
+
+        try
         {
-            byte color = image[i, j];
-            pixels[i, j] = new Pixel(color, color, color);
+            float hFov = 90;
+
+            int vRes = 108*3;
+            int hRes = 192*3;
+
+            Camera cam1 = new(new(0, 0, 0), new(0, 0, -1), new(0, 1, 0), hFov);
+
+            // TODO: fix lighting issue: need to invert direction for triangle or for cow
+            // at start when setting lighting dir or in caster when calculating brightness
+
+            PointLighting pointLightingRedOneZeroOne = new(new(255, 0, 0), 1f, new(1, 0, 1));
+            PointLighting pointLightingGreenMinusOneZeroOne = new(new(0, 255, 0), 1f, new(-1, 0, 1));
+
+            PointLighting warmLightingOneFiveNegSeven = new(new(253, 244, 220), 1f, new(10, 5, -7));
+            PointLighting warmLightingMinusOneFiveNegSeven = new(new(253, 244, 220), 1f, new(-10, 5, -7));
+
+            PointLighting pinkLightingOneFiveNegSeven = new(new(255, 105, 180), 1f, new(6, 4, -7));
+            PointLighting cyanLightingMinusOneFiveNegSeven = new(new(0, 100, 100), 1f, new(-6, 4, -7));
+
+            DirectionalLighting blueLightToNegativeZed = new(new(0, 0, 255), 1, new(0, 0, -1));
+            DirectionalLighting whiteLightToNegativeZed = new(new(255, 255, 255), 1, new(0, 0, -1));
+
+            AmbientLighting redSun = new(new(255, 0, 0), 1f);
+            AmbientLighting sun = new(new(255, 255, 255), 1f);
+
+            var lightings = new ILighting[]
+            {
+                sun,
+                //redSun,
+
+                //blueLightToNegativeZed,
+                //whiteLightToNegativeZed,
+
+                //pointLightingRedOneZeroOne,
+                //pointLightingGreenMinusOneZeroOne,
+
+                //warmLightingOneFiveNegSeven,
+                //warmLightingMinusOneFiveNegSeven,
+
+                //pinkLightingOneFiveNegSeven,
+                //cyanLightingMinusOneFiveNegSeven,
+            };
+
+            
+            // cows and geralt on plane
+            var cowsOnPlane = new SceneCreator().CowsOnPlane(cowSource, f16Source, lightings);
+
+            //var transformationsBuilder = new TransformationMatrixBuilder();
+            //var transformation = transformationsBuilder.Rotate(Axes.Y, 50).ThenTranslate(3, 1, -2);
+            //cowsAndGeraltOnPlane.Transform(transformation);
+
+            // cow
+            //var cow = new SceneCreator().Cow(cowSource, lightings);
+
+            //cow.Figures = cow.Figures.Concat(new IIntersectable[] { new Sphere(new(2, 2, -1), 1) }).ToArray();
+            //cow.Transform(transformationBuilder.);
+
+            Console.WriteLine(DateTime.Now);
+            Image image = new Renderer(cowsOnPlane, new LightNeglectingKdTreeCaster()).Render(vRes, hRes);
+            Console.WriteLine(DateTime.Now);
+
+            new BmpImageWriter().Write(image, destination);
+
+        }
+        catch (Exception e)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(e.Message);
+            Console.ForegroundColor = ConsoleColor.White;
+
         }
     }
-    return new Image(pixels);
 }

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "RayCasting": {
+      "commandName": "Project",
+      "commandLineArgs": "--source=C:\\Users\\arikt\\Documents\\Programming\\ComputerGraphics\\RayCasting\\RayCasting\\Images\\f-16.obj --destination=C:\\Users\\arikt\\Documents\\Programming\\ComputerGraphics\\RayCasting\\RayCasting\\Images\\newScene1.bmp"
+    }
+  }
+}//C:\\Users\\arikt\\Documents\\Programming\\ComputerGraphics\\RayCasting\\RayCasting\\Images\\f-16.obj

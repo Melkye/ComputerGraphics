@@ -1,19 +1,53 @@
 ﻿using RayCasting.Figures;
 using RayCasting.Lighting;
 using RayCasting.Cameras;
+using RayCasting.Casters;
+using RayCasting.Transformations;
 
 namespace RayCasting.Scenes;
 public class Scene
 {
-    public Scene(ICamera camera, ILightSource lightSource, IIntersectable[] figures)
+    // TODO consider removing public setters 
+    public Scene(string name, ICamera camera, ILighting[] lightings, IIntersectable[] figures, int maxFiguresInBox = 10)
     {
+        Name = name;
         Camera = camera;
-        LightSource = lightSource;
+        Lightings = lightings;
+        MaxFiguresInBox = maxFiguresInBox;
         Figures = figures;
     }
-    public ICamera Camera { get; }
 
-    public ILightSource LightSource { get; }
+    private IIntersectable[] _figures;
 
-    public IIntersectable[] Figures { get; }
+    private IIntersectable[] _figuresInBoxes;
+
+    public string Name { get; set; }
+
+    public int MaxFiguresInBox { get; set; }
+
+    public ICamera Camera { get; set; }
+
+    public ILighting[] Lightings { get; set; }
+
+    public IIntersectable[] Figures
+    {
+        get => _figures;
+        set
+        {
+            _figuresInBoxes = BoundingBoxes.GetBoundingBoxes(value, MaxFiguresInBox);
+            _figures = value;
+        }
+    }
+
+    public IIntersectable[] FiguresInBoxes => _figuresInBoxes;
+
+    public void Transform(TransformationMatrix4x4 transformation)
+    {
+        foreach (var figure in Figures)
+        {
+            figure.Transform(transformation);
+        }
+
+        _figuresInBoxes = BoundingBoxes.GetBoundingBoxes(Figures, MaxFiguresInBox);
+    }
 }
